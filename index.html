@@ -1,225 +1,435 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ClipWithRin — AI Video Clipper</title><style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ClipWithRin — AI Video Clipper</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    background: #090909;
-    color: white;
-    min-height: 100vh;
+body{
+    font-family:Arial,sans-serif;
+    background:#090909;
+    color:white;
+    min-height:100vh;
 }
 
-nav {
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 8%;
-    border-bottom: 1px solid #222;
+nav{
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 6%;
+    border-bottom:1px solid #222;
 }
 
-.logo {
-    font-size: 24px;
-    font-weight: bold;
+.logo{
+    font-size:22px;
+    font-weight:bold;
 }
 
-.logo span {
-    color: #e3fc87;
+.logo span{
+    color:#e3fc87;
 }
 
-.nav-btn {
-    background: #e3fc87;
-    color: black;
-    padding: 10px 18px;
-    border-radius: 10px;
-    font-weight: bold;
+.hero{
+    text-align:center;
+    padding:60px 20px 30px;
 }
 
-.hero {
-    text-align: center;
-    padding: 80px 20px 40px;
+.hero h1{
+    font-size:clamp(30px,8vw,52px);
 }
 
-.hero h1 {
-    font-size: 48px;
-    max-width: 800px;
-    margin: auto;
+.hero span{
+    color:#e3fc87;
 }
 
-.hero h1 span {
-    color: #e3fc87;
+.hero p{
+    color:#999;
+    margin-top:15px;
+    line-height:1.6;
 }
 
-.hero p {
-    color: #999;
-    margin-top: 20px;
-    font-size: 18px;
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:20px;
 }
 
-.upload-box {
-    max-width: 700px;
-    margin: 40px auto;
-    border: 2px dashed #444;
-    border-radius: 20px;
-    padding: 50px 20px;
-    text-align: center;
-    background: #111;
+.upload-box{
+    border:2px dashed #444;
+    border-radius:20px;
+    padding:45px 20px;
+    text-align:center;
+    background:#111;
 }
 
-.upload-icon {
-    font-size: 50px;
+.upload-box h2{
+    margin:15px 0;
 }
 
-.upload-box h2 {
-    margin-top: 15px;
+.upload-box p{
+    color:#888;
+    margin-bottom:25px;
 }
 
-.upload-box p {
-    color: #888;
-    margin: 10px 0 25px;
+.upload-btn{
+    display:inline-block;
+    background:#e3fc87;
+    color:#000;
+    padding:15px 28px;
+    border-radius:12px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-.upload-btn {
-    display: inline-block;
-    background: #e3fc87;
-    color: black;
-    padding: 15px 30px;
-    border-radius: 12px;
-    font-weight: bold;
-    cursor: pointer;
+input[type=file]{
+    display:none;
 }
 
-input[type="file"] {
-    display: none;
+.editor{
+    display:none;
+    margin-top:30px;
+    background:#111;
+    border:1px solid #222;
+    border-radius:20px;
+    padding:20px;
 }
 
-.features {
-    max-width: 1000px;
-    margin: 70px auto;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+.editor h2{
+    margin-bottom:20px;
 }
 
-.feature {
-    background: #111;
-    padding: 25px;
-    border-radius: 15px;
-    border: 1px solid #222;
+video{
+    width:100%;
+    max-height:500px;
+    border-radius:15px;
+    background:#000;
 }
 
-.feature h3 {
-    color: #e3fc87;
-    margin-bottom: 10px;
+.info{
+    margin-top:15px;
+    color:#aaa;
 }
 
-.feature p {
-    color: #999;
-    line-height: 1.5;
+.controls{
+    margin-top:20px;
+    padding:20px;
+    background:#181818;
+    border-radius:15px;
 }
 
-#fileName {
-    margin-top: 20px;
-    color: #e3fc87;
+.controls label{
+    display:block;
+    margin:15px 0 8px;
+    color:#ddd;
 }
 
-footer {
-    text-align: center;
-    padding: 30px;
-    color: #555;
+.controls input{
+    width:100%;
 }
-</style></head><body><nav>
+
+.time{
+    color:#e3fc87;
+    margin-top:10px;
+}
+
+.buttons{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+    flex-wrap:wrap;
+}
+
+button{
+    border:none;
+    padding:13px 18px;
+    border-radius:10px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.primary{
+    background:#e3fc87;
+    color:black;
+}
+
+.secondary{
+    background:#333;
+    color:white;
+}
+
+.feature-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:15px;
+    margin-top:25px;
+}
+
+.feature{
+    padding:18px;
+    background:#181818;
+    border-radius:12px;
+}
+
+.feature h3{
+    color:#e3fc87;
+    font-size:16px;
+    margin-bottom:8px;
+}
+
+.feature p{
+    color:#888;
+    font-size:13px;
+    line-height:1.5;
+}
+
+footer{
+    text-align:center;
+    color:#555;
+    padding:40px 20px;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
     <div class="logo">
         CLIP<span>WITHRIN</span>
-    </div><div class="nav-btn">
-    My Projects
-</div>
+    </div>
 
-</nav><section class="hero"><h1>
-    Turn Long Videos Into
-    <span>Short Viral Clips.</span>
-</h1>
+    <div>My Projects</div>
+</nav>
 
-<p>
-    Upload your video and let ClipWithRin help you create captions,
-    translations and short-form content.
-</p>
+<section class="hero">
+    <h1>
+        Turn Long Videos Into
+        <span>Short Clips.</span>
+    </h1>
 
-</section><div class="upload-box"><div class="upload-icon">🎬</div>
-
-<h2>Upload Your Video</h2>
-
-<p>MP4 • MOV • WEBM</p>
-
-<label class="upload-btn">
-
-    Choose Video
-
-    <input
-        type="file"
-        accept="video/*"
-        onchange="showFileName()"
-        id="videoUpload">
-
-</label>
-
-<div id="fileName"></div>
-
-</div><section class="features"><div class="feature">
-    <h3>✂ AI Clipping</h3>
     <p>
-        Find interesting moments from long videos.
+        Upload a video and start creating your content.
     </p>
+</section>
+
+<div class="container">
+
+    <div class="upload-box">
+
+        <div style="font-size:50px;">🎬</div>
+
+        <h2>Upload Your Video</h2>
+
+        <p>MP4 • MOV • WEBM</p>
+
+        <label class="upload-btn">
+            Choose Video
+            <input
+                type="file"
+                id="videoUpload"
+                accept="video/*">
+        </label>
+
+    </div>
+
+
+    <div class="editor" id="editor">
+
+        <h2>🎬 Video Editor</h2>
+
+        <video id="videoPreview" controls></video>
+
+        <div class="info" id="videoInfo"></div>
+
+
+        <div class="controls">
+
+            <label>Start Clip</label>
+
+            <input
+                type="range"
+                id="startRange"
+                min="0"
+                value="0"
+                step="0.1">
+
+            <div class="time">
+                Start: <span id="startTime">0.0</span>s
+            </div>
+
+
+            <label>End Clip</label>
+
+            <input
+                type="range"
+                id="endRange"
+                min="0"
+                value="0"
+                step="0.1">
+
+            <div class="time">
+                End: <span id="endTime">0.0</span>s
+            </div>
+
+
+            <div class="buttons">
+
+                <button class="primary" onclick="previewClip()">
+                    ▶ Preview Clip
+                </button>
+
+                <button class="secondary" onclick="resetVideo()">
+                    ↺ Change Video
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="feature-grid">
+
+            <div class="feature">
+                <h3>💬 Auto Caption</h3>
+                <p>Coming next</p>
+            </div>
+
+            <div class="feature">
+                <h3>🌐 Translate</h3>
+                <p>Coming next</p>
+            </div>
+
+            <div class="feature">
+                <h3>✂ Smart Clip</h3>
+                <p>Coming next</p>
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
-<div class="feature">
-    <h3>💬 Auto Caption</h3>
-    <p>
-        Generate subtitles automatically from your video.
-    </p>
-</div>
+<footer>
+© 2026 ClipWithRin
+</footer>
 
-<div class="feature">
-    <h3>🌐 Auto Translate</h3>
-    <p>
-        Translate subtitles into different languages.
-    </p>
-</div>
 
-<div class="feature">
-    <h3>📱 Social Ready</h3>
-    <p>
-        Create videos for TikTok, Reels and YouTube Shorts.
-    </p>
-</div>
+<script>
 
-</section><footer>
-    © 2026 ClipWithRin — AI Video Tools
-</footer><script>
+const upload = document.getElementById("videoUpload");
+const video = document.getElementById("videoPreview");
+const editor = document.getElementById("editor");
 
-function showFileName() {
+const startRange = document.getElementById("startRange");
+const endRange = document.getElementById("endRange");
 
-    const input =
-        document.getElementById("videoUpload");
+const startTime = document.getElementById("startTime");
+const endTime = document.getElementById("endTime");
 
-    const fileName =
-        document.getElementById("fileName");
+upload.addEventListener("change", function(){
 
-    if (input.files.length > 0) {
+    const file = this.files[0];
 
-        fileName.innerHTML =
-        "🎥 " + input.files[0].name;
+    if(!file) return;
 
-    }
+    const url = URL.createObjectURL(file);
+
+    video.src = url;
+
+    editor.style.display = "block";
+
+    document.getElementById("videoInfo").innerHTML =
+        "📁 " + file.name;
+
+    editor.scrollIntoView({
+        behavior:"smooth"
+    });
+
+});
+
+
+video.addEventListener("loadedmetadata", function(){
+
+    const duration = video.duration;
+
+    startRange.max = duration;
+    endRange.max = duration;
+
+    endRange.value = duration;
+
+    endTime.textContent = duration.toFixed(1);
+
+});
+
+
+startRange.addEventListener("input", function(){
+
+    startTime.textContent =
+        Number(this.value).toFixed(1);
+
+});
+
+
+endRange.addEventListener("input", function(){
+
+    endTime.textContent =
+        Number(this.value).toFixed(1);
+
+});
+
+
+function previewClip(){
+
+    video.currentTime =
+        Number(startRange.value);
+
+    video.play();
+
+    const end =
+        Number(endRange.value);
+
+    const interval = setInterval(function(){
+
+        if(video.currentTime >= end){
+
+            video.pause();
+
+            clearInterval(interval);
+
+        }
+
+    },100);
 
 }
 
-</script></body>
-  </html>
+
+function resetVideo(){
+
+    video.pause();
+
+    video.src = "";
+
+    upload.value = "";
+
+    editor.style.display = "none";
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+</script>
+
+</body>
+</html>
