@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ClipWithRin — AI Video Clipper</title><style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #090909;
+    color: white;
+    min-height: 100vh;
+}
+
+nav {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8%;
+    border-bottom: 1px solid #222;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #e3fc87;
+}
+
+.nav-btn {
+    background: #e3fc87;
+    color: black;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.hero {
+    text-align: center;
+    padding: 80px 20px 40px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    max-width: 800px;
+    margin: auto;
+}
+
+.hero h1 span {
+    color: #e3fc87;
+}
+
+.hero p {
+    color: #999;
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+.upload-box {
+    max-width: 700px;
+    margin: 40px auto;
+    border: 2px dashed #444;
+    border-radius: 20px;
+    padding: 50px 20px;
+    text-align: center;
+    background: #111;
+}
+
+.upload-icon {
+    font-size: 50px;
+}
+
+.upload-box h2 {
+    margin-top: 15px;
+}
+
+.upload-box p {
+    color: #888;
+    margin: 10px 0 25px;
+}
+
+.upload-btn {
+    display: inline-block;
+    background: #e3fc87;
+    color: black;
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.features {
+    max-width: 1000px;
+    margin: 70px auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.feature {
+    background: #111;
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid #222;
+}
+
+.feature h3 {
+    color: #e3fc87;
+    margin-bottom: 10px;
+}
+
+.feature p {
+    color: #999;
+    line-height: 1.5;
+}
+
+#fileName {
+    margin-top: 20px;
+    color: #e3fc87;
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    color: #555;
+}
+</style></head><body><nav>
+    <div class="logo">
+        CLIP<span>WITHRIN</span>
+    </div><div class="nav-btn">
+    My Projects
+</div>
+
+</nav><section class="hero"><h1>
+    Turn Long Videos Into
+    <span>Short Viral Clips.</span>
+</h1>
+
+<p>
+    Upload your video and let ClipWithRin help you create captions,
+    translations and short-form content.
+</p>
+
+</section><div class="upload-box"><div class="upload-icon">🎬</div>
+
+<h2>Upload Your Video</h2>
+
+<p>MP4 • MOV • WEBM</p>
+
+<label class="upload-btn">
+
+    Choose Video
+
+    <input
+        type="file"
+        accept="video/*"
+        onchange="showFileName()"
+        id="videoUpload">
+
+</label>
+
+<div id="fileName"></div>
+
+</div><section class="features"><div class="feature">
+    <h3>✂ AI Clipping</h3>
+    <p>
+        Find interesting moments from long videos.
+    </p>
+</div>
+
+<div class="feature">
+    <h3>💬 Auto Caption</h3>
+    <p>
+        Generate subtitles automatically from your video.
+    </p>
+</div>
+
+<div class="feature">
+    <h3>🌐 Auto Translate</h3>
+    <p>
+        Translate subtitles into different languages.
+    </p>
+</div>
+
+<div class="feature">
+    <h3>📱 Social Ready</h3>
+    <p>
+        Create videos for TikTok, Reels and YouTube Shorts.
+    </p>
+</div>
+
+</section><footer>
+    © 2026 ClipWithRin — AI Video Tools
+</footer><script>
+
+function showFileName() {
+
+    const input =
+        document.getElementById("videoUpload");
+
+    const fileName =
+        document.getElementById("fileName");
+
+    if (input.files.length > 0) {
+
+        fileName.innerHTML =
+        "🎥 " + input.files[0].name;
+
+    }
+
+}
+
+</script></body>
+  </html>
