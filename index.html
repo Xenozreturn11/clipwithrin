@@ -7,6 +7,7 @@
 <title>ClipWithRin — AI Video Clipper</title>
 
 <style>
+
 *{
     margin:0;
     padding:0;
@@ -166,50 +167,60 @@ button{
     color:white;
 }
 
-.feature-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-    gap:15px;
+
+/* AUTO CAPTION */
+
+.caption-panel{
     margin-top:25px;
-}
-
-.feature{
-    padding:18px;
+    padding:20px;
     background:#181818;
-    border-radius:12px;
+    border-radius:15px;
 }
 
-.feature h3{
-    color:#e3fc87;
-    font-size:16px;
-    margin-bottom:8px;
+.caption-panel h2{
+    margin-bottom:10px;
 }
 
-.feature p{
+.caption-panel p{
     color:#888;
-    font-size:13px;
+    margin-bottom:15px;
+}
+
+#captionText{
+    min-height:80px;
+    padding:20px;
+    margin-bottom:15px;
+    background:#000;
+    border-radius:12px;
+    font-size:22px;
     line-height:1.5;
 }
+
 
 footer{
     text-align:center;
     color:#555;
     padding:40px 20px;
 }
+
 </style>
 </head>
 
 <body>
 
 <nav>
+
     <div class="logo">
         CLIP<span>WITHRIN</span>
     </div>
 
     <div>My Projects</div>
+
 </nav>
 
+
 <section class="hero">
+
     <h1>
         Turn Long Videos Into
         <span>Short Clips.</span>
@@ -218,9 +229,12 @@ footer{
     <p>
         Upload a video and start creating your content.
     </p>
+
 </section>
 
+
 <div class="container">
+
 
     <div class="upload-box">
 
@@ -231,14 +245,18 @@ footer{
         <p>MP4 • MOV • WEBM</p>
 
         <label class="upload-btn">
+
             Choose Video
+
             <input
                 type="file"
                 id="videoUpload"
                 accept="video/*">
+
         </label>
 
     </div>
+
 
 
     <div class="editor" id="editor">
@@ -248,6 +266,7 @@ footer{
         <video id="videoPreview" controls></video>
 
         <div class="info" id="videoInfo"></div>
+
 
 
         <div class="controls">
@@ -261,9 +280,14 @@ footer{
                 value="0"
                 step="0.1">
 
+
             <div class="time">
-                Start: <span id="startTime">0.0</span>s
+
+                Start:
+                <span id="startTime">0.0</span>s
+
             </div>
+
 
 
             <label>End Clip</label>
@@ -275,9 +299,14 @@ footer{
                 value="0"
                 step="0.1">
 
+
             <div class="time">
-                End: <span id="endTime">0.0</span>s
+
+                End:
+                <span id="endTime">0.0</span>s
+
             </div>
+
 
 
             <div class="buttons">
@@ -295,45 +324,64 @@ footer{
         </div>
 
 
-        <div class="feature-grid">
 
-            <div class="feature">
-                <h3>💬 Auto Caption</h3>
-                <p>Coming next</p>
+        <!-- AUTO CAPTION -->
+
+        <div class="caption-panel">
+
+            <h2>💬 Auto Caption</h2>
+
+            <p id="captionStatus">
+                Tekan tombol di bawah untuk memulai caption.
+            </p>
+
+            <div id="captionText">
+                Caption akan muncul di sini...
             </div>
 
-            <div class="feature">
-                <h3>🌐 Translate</h3>
-                <p>Coming next</p>
-            </div>
 
-            <div class="feature">
-                <h3>✂ Smart Clip</h3>
-                <p>Coming next</p>
+            <div class="buttons">
+
+                <button class="primary" onclick="startCaption()">
+                    🎙️ Start Auto Caption
+                </button>
+
+                <button class="secondary" onclick="stopCaption()">
+                    ⏹ Stop
+                </button>
+
             </div>
 
         </div>
 
+
     </div>
 
 </div>
+
 
 <footer>
 © 2026 ClipWithRin
 </footer>
 
 
+
 <script>
 
 const upload = document.getElementById("videoUpload");
+
 const video = document.getElementById("videoPreview");
+
 const editor = document.getElementById("editor");
 
 const startRange = document.getElementById("startRange");
+
 const endRange = document.getElementById("endRange");
 
 const startTime = document.getElementById("startTime");
+
 const endTime = document.getElementById("endTime");
+
 
 upload.addEventListener("change", function(){
 
@@ -362,11 +410,13 @@ video.addEventListener("loadedmetadata", function(){
     const duration = video.duration;
 
     startRange.max = duration;
+
     endRange.max = duration;
 
     endRange.value = duration;
 
-    endTime.textContent = duration.toFixed(1);
+    endTime.textContent =
+        duration.toFixed(1);
 
 });
 
@@ -426,6 +476,102 @@ function resetVideo(){
         top:0,
         behavior:"smooth"
     });
+
+}
+
+
+/* AUTO CAPTION */
+
+let recognition;
+
+
+function startCaption(){
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+
+    if(!SpeechRecognition){
+
+        alert(
+            "Browser kamu belum mendukung Auto Caption. Gunakan Google Chrome."
+        );
+
+        return;
+
+    }
+
+
+    recognition =
+        new SpeechRecognition();
+
+
+    recognition.lang = "id-ID";
+
+    recognition.continuous = true;
+
+    recognition.interimResults = true;
+
+
+    recognition.onstart = function(){
+
+        document.getElementById("captionStatus").textContent =
+            "🎙️ Mendengarkan suara...";
+
+    };
+
+
+    recognition.onresult = function(event){
+
+        let finalText = "";
+
+        for(
+            let i = event.resultIndex;
+            i < event.results.length;
+            i++
+        ){
+
+            finalText +=
+                event.results[i][0].transcript + " ";
+
+        }
+
+
+        document.getElementById("captionText").textContent =
+            finalText;
+
+    };
+
+
+    recognition.onerror = function(event){
+
+        document.getElementById("captionStatus").textContent =
+            "❌ Error: " + event.error;
+
+    };
+
+
+    recognition.onend = function(){
+
+        document.getElementById("captionStatus").textContent =
+            "⏹ Caption selesai.";
+
+    };
+
+
+    recognition.start();
+
+}
+
+
+function stopCaption(){
+
+    if(recognition){
+
+        recognition.stop();
+
+    }
 
 }
 
