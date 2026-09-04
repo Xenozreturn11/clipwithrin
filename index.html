@@ -108,7 +108,7 @@ input[type=file]{
     margin-bottom:20px;
 }
 
-/* VIDEO + SUBTITLE */
+/* VIDEO */
 
 .video-wrapper{
     position:relative;
@@ -123,7 +123,7 @@ video{
     display:block;
 }
 
-/* SUBTITLE DI ATAS VIDEO */
+/* LIVE SUBTITLE */
 
 .video-subtitle{
     position:absolute;
@@ -179,11 +179,15 @@ video{
     flex-wrap:wrap;
 }
 
-button{
+button,
+select{
     border:none;
     padding:13px 18px;
     border-radius:10px;
     font-weight:bold;
+}
+
+button{
     cursor:pointer;
 }
 
@@ -197,7 +201,7 @@ button{
     color:white;
 }
 
-/* CAPTION PANEL */
+/* CAPTION */
 
 .caption-panel{
     margin-top:25px;
@@ -226,6 +230,33 @@ button{
     white-space:pre-wrap;
 }
 
+/* TRANSLATE */
+
+.translate-panel{
+    margin-top:20px;
+    padding:20px;
+    background:#111;
+    border-radius:15px;
+}
+
+.translate-panel h3{
+    margin-bottom:10px;
+    color:#e3fc87;
+}
+
+.translate-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.translate-row select{
+    background:#333;
+    color:white;
+    flex:1;
+    min-width:180px;
+}
+
 /* SUBTITLE LIST */
 
 #subtitleList{
@@ -251,7 +282,16 @@ button{
     line-height:1.5;
 }
 
-#downloadSrtBtn{
+.subtitle-translation{
+    margin-top:8px;
+    color:#aaa;
+    font-size:14px;
+    border-top:1px solid #333;
+    padding-top:8px;
+}
+
+#downloadSrtBtn,
+#downloadTranslatedSrtBtn{
     display:none;
 }
 
@@ -264,7 +304,7 @@ footer{
 </style>
 
 
-<!-- TRANSFORMERS.JS -->
+<!-- TRANSFORMERS.JS / WHISPER -->
 
 <script type="module">
 
@@ -339,7 +379,7 @@ window.transformersPipeline = pipeline;
         <h2>🎬 Video Editor</h2>
 
 
-        <!-- VIDEO + LIVE SUBTITLE -->
+        <!-- VIDEO -->
 
         <div class="video-wrapper">
 
@@ -410,7 +450,6 @@ window.transformersPipeline = pipeline;
 
                 </button>
 
-
                 <button
                     class="secondary"
                     onclick="resetVideo()">
@@ -431,24 +470,99 @@ window.transformersPipeline = pipeline;
             <h2>💬 Auto Caption AI</h2>
 
             <p id="captionStatus">
-
-                Upload video terlebih dahulu,
-                lalu tekan Generate Auto Caption.
-
+                Upload video terlebih dahulu, lalu tekan Generate Auto Caption.
             </p>
 
-
             <div id="captionText">
-
                 Caption akan muncul di sini...
+            </div>
+
+
+            <!-- TRANSLATE -->
+
+            <div class="translate-panel">
+
+                <h3>🌐 Translate Subtitle</h3>
+
+                <div class="translate-row">
+
+                    <select id="sourceLanguage">
+
+                        <option value="auto">
+                            🔍 Detect Language
+                        </option>
+
+                        <option value="id">
+                            🇮🇩 Indonesian
+                        </option>
+
+                        <option value="en">
+                            🇺🇸 English
+                        </option>
+
+                        <option value="ja">
+                            🇯🇵 Japanese
+                        </option>
+
+                        <option value="ko">
+                            🇰🇷 Korean
+                        </option>
+
+                        <option value="es">
+                            🇪🇸 Spanish
+                        </option>
+
+                    </select>
+
+
+                    <select id="targetLanguage">
+
+                        <option value="en">
+                            🇺🇸 English
+                        </option>
+
+                        <option value="id">
+                            🇮🇩 Indonesian
+                        </option>
+
+                        <option value="ja">
+                            🇯🇵 Japanese
+                        </option>
+
+                        <option value="ko">
+                            🇰🇷 Korean
+                        </option>
+
+                        <option value="es">
+                            🇪🇸 Spanish
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="buttons">
+
+                    <button
+                        class="primary"
+                        onclick="translateSubtitles()">
+
+                        🌐 Translate Subtitle
+
+                    </button>
+
+                </div>
 
             </div>
 
 
-            <!-- SUBTITLE TIMESTAMP -->
+            <!-- SUBTITLE LIST -->
 
             <div id="subtitleList"></div>
 
+
+            <!-- BUTTONS -->
 
             <div class="buttons">
 
@@ -473,16 +587,25 @@ window.transformersPipeline = pipeline;
                 <button
                     id="downloadSrtBtn"
                     class="primary"
-                    onclick="downloadSRT()">
+                    onclick="downloadSRT(false)">
 
-                    ⬇ Download SRT
+                    ⬇ Download Original SRT
+
+                </button>
+
+
+                <button
+                    id="downloadTranslatedSrtBtn"
+                    class="primary"
+                    onclick="downloadSRT(true)">
+
+                    ⬇ Download Translated SRT
 
                 </button>
 
             </div>
 
         </div>
-
 
     </div>
 
@@ -530,8 +653,17 @@ const subtitleList =
 const downloadSrtBtn =
     document.getElementById("downloadSrtBtn");
 
+const downloadTranslatedSrtBtn =
+    document.getElementById("downloadTranslatedSrtBtn");
+
 const videoSubtitle =
     document.getElementById("videoSubtitle");
+
+const sourceLanguage =
+    document.getElementById("sourceLanguage");
+
+const targetLanguage =
+    document.getElementById("targetLanguage");
 
 
 let selectedFile = null;
@@ -544,7 +676,7 @@ let subtitleData = [];
 
 
 /* ================================
-   UPLOAD VIDEO
+   UPLOAD
 ================================ */
 
 upload.addEventListener("change", function(){
@@ -563,6 +695,8 @@ upload.addEventListener("change", function(){
 
     downloadSrtBtn.style.display = "none";
 
+    downloadTranslatedSrtBtn.style.display = "none";
+
 
     const url =
         URL.createObjectURL(file);
@@ -574,11 +708,6 @@ upload.addEventListener("change", function(){
 
     document.getElementById("videoInfo").textContent =
         "📁 " + file.name;
-
-
-    editor.scrollIntoView({
-        behavior:"smooth"
-    });
 
 });
 
@@ -608,7 +737,7 @@ video.addEventListener("loadedmetadata", function(){
 
 
 /* ================================
-   RANGE CONTROLS
+   RANGE
 ================================ */
 
 startRange.addEventListener("input", function(){
@@ -617,7 +746,6 @@ startRange.addEventListener("input", function(){
         Number(startRange.value).toFixed(1);
 
 });
-
 
 endRange.addEventListener("input", function(){
 
@@ -628,7 +756,7 @@ endRange.addEventListener("input", function(){
 
 
 /* ================================
-   PREVIEW CLIP
+   PREVIEW
 ================================ */
 
 function previewClip(){
@@ -642,7 +770,7 @@ function previewClip(){
 
 
 /* ================================
-   RESET VIDEO
+   RESET
 ================================ */
 
 function resetVideo(){
@@ -665,35 +793,26 @@ function resetVideo(){
 
     downloadSrtBtn.style.display = "none";
 
+    downloadTranslatedSrtBtn.style.display = "none";
+
     editor.style.display = "none";
 
 }
 
 
 /* ================================
-   FORMAT SRT TIME
+   FORMAT TIME
 ================================ */
 
 function formatSRTTime(seconds){
 
-    if(
-        seconds === null ||
-        seconds === undefined ||
-        !isFinite(seconds)
-    ){
-
-        seconds = 0;
-
-    }
-
+    if(!isFinite(seconds)) seconds = 0;
 
     const hours =
         Math.floor(seconds / 3600);
 
     const minutes =
-        Math.floor(
-            (seconds % 3600) / 60
-        );
+        Math.floor((seconds % 3600) / 60);
 
     const secs =
         Math.floor(seconds % 60);
@@ -703,7 +822,6 @@ function formatSRTTime(seconds){
             (seconds - Math.floor(seconds))
             * 1000
         );
-
 
     return String(hours).padStart(2,"0")
         + ":" +
@@ -717,13 +835,12 @@ function formatSRTTime(seconds){
 
 
 /* ================================
-   DISPLAY SUBTITLES
+   DISPLAY SUBTITLE
 ================================ */
 
 function displaySubtitles(){
 
     subtitleList.innerHTML = "";
-
 
     subtitleData.forEach(function(subtitle){
 
@@ -760,6 +877,24 @@ function displaySubtitles(){
 
         item.appendChild(text);
 
+
+        if(subtitle.translatedText){
+
+            const translation =
+                document.createElement("div");
+
+            translation.className =
+                "subtitle-translation";
+
+            translation.textContent =
+                "🌐 " +
+                subtitle.translatedText;
+
+            item.appendChild(translation);
+
+        }
+
+
         subtitleList.appendChild(item);
 
     });
@@ -768,25 +903,16 @@ function displaySubtitles(){
 
 
 /* ================================
-   LIVE SUBTITLE ON VIDEO
+   LIVE SUBTITLE
 ================================ */
 
 video.addEventListener("timeupdate", function(){
-
-    if(subtitleData.length === 0){
-
-        videoSubtitle.textContent = "";
-
-        return;
-
-    }
-
 
     const currentTime =
         video.currentTime;
 
 
-    const activeSubtitle =
+    const active =
         subtitleData.find(function(subtitle){
 
             return (
@@ -797,12 +923,15 @@ video.addEventListener("timeupdate", function(){
         });
 
 
-    if(activeSubtitle){
+    if(active){
 
         videoSubtitle.textContent =
-            activeSubtitle.text;
+            active.translatedText ||
+            active.text;
 
-    }else{
+    }
+
+    else{
 
         videoSubtitle.textContent = "";
 
@@ -812,7 +941,7 @@ video.addEventListener("timeupdate", function(){
 
 
 /* ================================
-   AUTO CAPTION WHISPER AI
+   AUTO CAPTION
 ================================ */
 
 async function generateCaption(){
@@ -827,14 +956,7 @@ async function generateCaption(){
     if(!selectedFile){
 
         status.textContent =
-            "❌ Belum ada video yang dipilih.";
-
-        return;
-
-    }
-
-
-    if(processing){
+            "❌ Belum ada video.";
 
         return;
 
@@ -849,18 +971,9 @@ async function generateCaption(){
 
         subtitleData = [];
 
-        subtitleList.innerHTML = "";
-
-        videoSubtitle.textContent = "";
-
-        downloadSrtBtn.style.display = "none";
-
 
         status.textContent =
-            "📥 Membaca audio dari video...";
-
-        captionText.textContent =
-            "Mohon tunggu...";
+            "📥 Membaca audio...";
 
 
         const arrayBuffer =
@@ -882,29 +995,8 @@ async function generateCaption(){
             );
 
 
-        if(stopRequested){
-
-            processing = false;
-
-            return;
-
-        }
-
-
         status.textContent =
             "🤖 Memuat Whisper AI...";
-
-        captionText.textContent =
-            "Model AI sedang dipersiapkan...";
-
-
-        if(!window.transformersPipeline){
-
-            throw new Error(
-                "Library AI belum selesai dimuat."
-            );
-
-        }
 
 
         const transcriber =
@@ -917,17 +1009,8 @@ async function generateCaption(){
             );
 
 
-        if(stopRequested){
-
-            processing = false;
-
-            return;
-
-        }
-
-
         status.textContent =
-            "🎙️ AI sedang membuat subtitle...";
+            "🎙️ Membuat subtitle...";
 
 
         const audioData =
@@ -946,26 +1029,12 @@ async function generateCaption(){
             );
 
 
-        if(stopRequested){
-
-            processing = false;
-
-            return;
-
-        }
-
-
         captionText.textContent =
             result.text ||
             "Tidak ada suara yang terdeteksi.";
 
 
-        /* CREATE SUBTITLE DATA */
-
-        if(
-            result.chunks &&
-            result.chunks.length > 0
-        ){
+        if(result.chunks){
 
             result.chunks.forEach(function(chunk){
 
@@ -983,7 +1052,9 @@ async function generateCaption(){
                         ((timestamp[0] || 0) + 2),
 
                     text:
-                        chunk.text.trim()
+                        chunk.text.trim(),
+
+                    translatedText:""
 
                 });
 
@@ -991,8 +1062,6 @@ async function generateCaption(){
 
         }
 
-
-        /* FALLBACK */
 
         if(
             subtitleData.length === 0 &&
@@ -1010,7 +1079,9 @@ async function generateCaption(){
                     ),
 
                 text:
-                    result.text.trim()
+                    result.text.trim(),
+
+                translatedText:""
 
             });
 
@@ -1019,18 +1090,12 @@ async function generateCaption(){
 
         displaySubtitles();
 
-
-        if(subtitleData.length > 0){
-
-            downloadSrtBtn.style.display =
-                "inline-block";
-
-        }
+        downloadSrtBtn.style.display =
+            "inline-block";
 
 
         status.textContent =
             "✅ Subtitle berhasil dibuat!";
-
 
         processing = false;
 
@@ -1042,17 +1107,9 @@ async function generateCaption(){
 
         processing = false;
 
-
         status.textContent =
-            "❌ Terjadi error saat membuat subtitle.";
-
-
-        captionText.textContent =
-            "Error: " +
-            (
-                error.message ||
-                "Tidak diketahui"
-            );
+            "❌ Error: " +
+            error.message;
 
     }
 
@@ -1060,34 +1117,19 @@ async function generateCaption(){
 
 
 /* ================================
-   STOP
+   TRANSLATE SUBTITLES
 ================================ */
 
-function stopCaption(){
+async function translateSubtitles(){
 
-    stopRequested = true;
+    const status =
+        document.getElementById("captionStatus");
 
-    processing = false;
-
-
-    document.getElementById(
-        "captionStatus"
-    ).textContent =
-        "⏹ Proses dihentikan.";
-
-}
-
-
-/* ================================
-   DOWNLOAD SRT
-================================ */
-
-function downloadSRT(){
 
     if(subtitleData.length === 0){
 
         alert(
-            "Belum ada subtitle untuk didownload."
+            "Buat Auto Caption terlebih dahulu."
         );
 
         return;
@@ -1095,71 +1137,59 @@ function downloadSRT(){
     }
 
 
-    let srtContent = "";
+    const source =
+        sourceLanguage.value;
+
+    const target =
+        targetLanguage.value;
 
 
-    subtitleData.forEach(function(
-        subtitle,
-        index
-    ){
-
-        srtContent +=
-            (index + 1) + "\n";
+    status.textContent =
+        "🌐 Menerjemahkan subtitle...";
 
 
-        srtContent +=
-            formatSRTTime(subtitle.start)
-            + " --> " +
-            formatSRTTime(subtitle.end)
-            + "\n";
+    try{
+
+        for(let i = 0;
+            i < subtitleData.length;
+            i++){
+
+            const subtitle =
+                subtitleData[i];
 
 
-        srtContent +=
-            subtitle.text
-            + "\n\n";
-
-    });
-
-
-    const blob =
-        new Blob(
-
-            [srtContent],
-
-            {
-                type:
-                "application/x-subrip;charset=utf-8"
-            }
-
-        );
+            status.textContent =
+                "🌐 Menerjemahkan "
+                + (i + 1)
+                + " dari "
+                + subtitleData.length;
 
 
-    const url =
-        URL.createObjectURL(blob);
+            const languagePair =
+                source + "|" + target;
 
 
-    const link =
-        document.createElement("a");
+            const response =
+                await fetch(
+
+                    "https://api.mymemory.translated.net/get?q="
+                    + encodeURIComponent(
+                        subtitle.text
+                    )
+                    + "&langpair="
+                    + languagePair
+
+                );
 
 
-    link.href = url;
-
-    link.download =
-        "clipwithrin-subtitle.srt";
+            const data =
+                await response.json();
 
 
-    document.body.appendChild(link);
+            if(
+                data.responseData &&
+                data.responseData.translatedText
+            ){
 
-    link.click();
-
-    document.body.removeChild(link);
-
-
-    URL.revokeObjectURL(url);
-
-}
-
-</script>
-
-</body>
-    </html>
+                subtitle.translatedText =
+    
