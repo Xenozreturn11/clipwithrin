@@ -194,6 +194,33 @@ button{
     white-space:pre-wrap;
 }
 
+#subtitleList{
+    margin-top:15px;
+}
+
+.subtitle-item{
+    padding:14px;
+    margin-bottom:10px;
+    background:#111;
+    border-radius:10px;
+    border-left:3px solid #e3fc87;
+}
+
+.subtitle-time{
+    color:#e3fc87;
+    font-size:13px;
+    margin-bottom:6px;
+}
+
+.subtitle-content{
+    color:#fff;
+    line-height:1.5;
+}
+
+#downloadSrtBtn{
+    display:none;
+}
+
 footer{
     text-align:center;
     color:#555;
@@ -202,7 +229,7 @@ footer{
 
 </style>
 
-<!-- TRANSFORMERS.JS / WHISPER -->
+<!-- TRANSFORMERS.JS -->
 <script type="module">
 
 import { pipeline } from
@@ -241,7 +268,6 @@ window.transformersPipeline = pipeline;
 
 <div class="container">
 
-
     <div class="upload-box">
 
         <div style="font-size:50px;">🎬</div>
@@ -273,7 +299,7 @@ window.transformersPipeline = pipeline;
         <div class="info" id="videoInfo"></div>
 
 
-        <!-- VIDEO CLIP CONTROLS -->
+        <!-- CLIP CONTROLS -->
 
         <div class="controls">
 
@@ -315,7 +341,6 @@ window.transformersPipeline = pipeline;
 
                 </button>
 
-
                 <button
                     class="secondary"
                     onclick="resetVideo()">
@@ -339,10 +364,13 @@ window.transformersPipeline = pipeline;
                 Upload video terlebih dahulu, lalu tekan Generate Auto Caption.
             </p>
 
-
             <div id="captionText">
                 Caption akan muncul di sini...
             </div>
+
+            <!-- SUBTITLE LIST -->
+
+            <div id="subtitleList"></div>
 
 
             <div class="buttons">
@@ -364,10 +392,19 @@ window.transformersPipeline = pipeline;
 
                 </button>
 
+
+                <button
+                    id="downloadSrtBtn"
+                    class="primary"
+                    onclick="downloadSRT()">
+
+                    ⬇ Download SRT
+
+                </button>
+
             </div>
 
         </div>
-
 
     </div>
 
@@ -375,7 +412,7 @@ window.transformersPipeline = pipeline;
 
 
 <footer>
-© 2026 ClipWithRinjuu — STEP 7.4 TEST 🔥
+© 2026 ClipWithRin
 </footer>
 
 
@@ -383,7 +420,7 @@ window.transformersPipeline = pipeline;
 <script>
 
 /* =====================================
-   VIDEO VARIABLES
+   VARIABLES
 ===================================== */
 
 const upload =
@@ -407,12 +444,20 @@ const startTime =
 const endTime =
     document.getElementById("endTime");
 
+const subtitleList =
+    document.getElementById("subtitleList");
+
+const downloadSrtBtn =
+    document.getElementById("downloadSrtBtn");
+
 
 let selectedFile = null;
 
 let processing = false;
 
 let stopRequested = false;
+
+let subtitleData = [];
 
 
 /* =====================================
@@ -425,23 +470,23 @@ upload.addEventListener("change", function(){
 
     if(!file) return;
 
-
     selectedFile = file;
 
+    subtitleData = [];
+
+    subtitleList.innerHTML = "";
+
+    downloadSrtBtn.style.display = "none";
 
     const url =
         URL.createObjectURL(file);
 
-
     video.src = url;
-
 
     editor.style.display = "block";
 
-
     document.getElementById("videoInfo").textContent =
         "📁 " + file.name;
-
 
     editor.scrollIntoView({
         behavior:"smooth"
@@ -458,16 +503,11 @@ video.addEventListener("loadedmetadata", function(){
 
     const duration = video.duration;
 
-
     startRange.max = duration;
-
     endRange.max = duration;
 
-
     startRange.value = 0;
-
     endRange.value = duration;
-
 
     startTime.textContent = "0.0";
 
@@ -478,7 +518,7 @@ video.addEventListener("loadedmetadata", function(){
 
 
 /* =====================================
-   RANGE CONTROLS
+   RANGE
 ===================================== */
 
 startRange.addEventListener("input", function(){
@@ -498,7 +538,7 @@ endRange.addEventListener("input", function(){
 
 
 /* =====================================
-   PREVIEW CLIP
+   PREVIEW
 ===================================== */
 
 function previewClip(){
@@ -506,45 +546,129 @@ function previewClip(){
     video.currentTime =
         Number(startRange.value);
 
-
     video.play();
 
 }
 
 
 /* =====================================
-   RESET VIDEO
+   RESET
 ===================================== */
 
 function resetVideo(){
 
     video.pause();
 
-
     video.removeAttribute("src");
 
     video.load();
 
-
     upload.value = "";
-
 
     selectedFile = null;
 
+    subtitleData = [];
+
+    subtitleList.innerHTML = "";
+
+    downloadSrtBtn.style.display = "none";
 
     editor.style.display = "none";
 
+}
 
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
+
+/* =====================================
+   TIME FORMAT
+===================================== */
+
+function formatSRTTime(seconds){
+
+    if(seconds === null ||
+       seconds === undefined ||
+       !isFinite(seconds)){
+
+        seconds = 0;
+
+    }
+
+
+    const hours =
+        Math.floor(seconds / 3600);
+
+    const minutes =
+        Math.floor((seconds % 3600) / 60);
+
+    const secs =
+        Math.floor(seconds % 60);
+
+    const milliseconds =
+        Math.floor(
+            (seconds - Math.floor(seconds)) * 1000
+        );
+
+
+    return String(hours).padStart(2,"0") + ":" +
+           String(minutes).padStart(2,"0") + ":" +
+           String(secs).padStart(2,"0") + "," +
+           String(milliseconds).padStart(3,"0");
+
+}
+
+
+/* =====================================
+   DISPLAY SUBTITLES
+===================================== */
+
+function displaySubtitles(){
+
+    subtitleList.innerHTML = "";
+
+
+    subtitleData.forEach(function(subtitle, index){
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "subtitle-item";
+
+
+        const time =
+            document.createElement("div");
+
+        time.className =
+            "subtitle-time";
+
+        time.textContent =
+            formatSRTTime(subtitle.start) +
+            " → " +
+            formatSRTTime(subtitle.end);
+
+
+        const text =
+            document.createElement("div");
+
+        text.className =
+            "subtitle-content";
+
+        text.textContent =
+            subtitle.text;
+
+
+        item.appendChild(time);
+
+        item.appendChild(text);
+
+        subtitleList.appendChild(item);
+
     });
 
 }
 
 
 /* =====================================
-   AUTO CAPTION WITH WHISPER AI
+   AUTO CAPTION WITH TIMESTAMPS
 ===================================== */
 
 async function generateCaption(){
@@ -560,9 +684,6 @@ async function generateCaption(){
 
         status.textContent =
             "❌ Belum ada video yang dipilih.";
-
-        captionText.textContent =
-            "Silakan upload video terlebih dahulu.";
 
         return;
 
@@ -582,8 +703,12 @@ async function generateCaption(){
 
         stopRequested = false;
 
+        subtitleData = [];
 
-        /* STEP 1 */
+        subtitleList.innerHTML = "";
+
+        downloadSrtBtn.style.display = "none";
+
 
         status.textContent =
             "📥 Membaca audio dari video...";
@@ -595,8 +720,6 @@ async function generateCaption(){
         const arrayBuffer =
             await selectedFile.arrayBuffer();
 
-
-        /* AUDIO CONTEXT */
 
         const AudioContextClass =
             window.AudioContext ||
@@ -613,8 +736,6 @@ async function generateCaption(){
             );
 
 
-        /* STOP CHECK */
-
         if(stopRequested){
 
             processing = false;
@@ -624,27 +745,22 @@ async function generateCaption(){
         }
 
 
-        /* STEP 2 */
-
         status.textContent =
             "🤖 Memuat Whisper AI...";
 
+
         captionText.textContent =
-            "Pertama kali digunakan, model AI sedang diunduh. Mohon tunggu...";
+            "Model AI sedang dipersiapkan...";
 
-
-        /* WAIT FOR LIBRARY */
 
         if(!window.transformersPipeline){
 
             throw new Error(
-                "Library AI belum selesai dimuat. Refresh halaman lalu coba lagi."
+                "Library AI belum selesai dimuat."
             );
 
         }
 
-
-        /* LOAD WHISPER */
 
         const transcriber =
             await window.transformersPipeline(
@@ -662,10 +778,8 @@ async function generateCaption(){
         }
 
 
-        /* STEP 3 */
-
         status.textContent =
-            "🎙️ AI sedang membuat caption...";
+            "🎙️ AI sedang membuat subtitle...";
 
 
         const audioData =
@@ -673,12 +787,15 @@ async function generateCaption(){
 
 
         /*
-        WHISPER EXPECTS AUDIO DATA
+        RETURN TIMESTAMPS
         */
 
         const result =
             await transcriber(
-                audioData
+                audioData,
+                {
+                    return_timestamps: true
+                }
             );
 
 
@@ -691,14 +808,82 @@ async function generateCaption(){
         }
 
 
-        /* RESULT */
+        captionText.textContent =
+            result.text ||
+            "Tidak ada suara yang terdeteksi.";
+
+
+        /*
+        CONVERT WHISPER CHUNKS
+        */
+
+        if(result.chunks &&
+           result.chunks.length > 0){
+
+            result.chunks.forEach(function(chunk){
+
+                const timestamp =
+                    chunk.timestamp || [0,0];
+
+
+                subtitleData.push({
+
+                    start:
+                        timestamp[0] || 0,
+
+                    end:
+                        timestamp[1] ||
+                        timestamp[0] + 2,
+
+                    text:
+                        chunk.text.trim()
+
+                });
+
+            });
+
+        }
+
+
+        /*
+        FALLBACK
+        Jika model tidak memberikan chunks
+        */
+
+        if(subtitleData.length === 0 &&
+           result.text){
+
+            subtitleData.push({
+
+                start:0,
+
+                end:
+                    Math.min(
+                        audioBuffer.duration,
+                        10
+                    ),
+
+                text:
+                    result.text.trim()
+
+            });
+
+        }
+
+
+        displaySubtitles();
+
+
+        if(subtitleData.length > 0){
+
+            downloadSrtBtn.style.display =
+                "inline-block";
+
+        }
+
 
         status.textContent =
-            "✅ Auto Caption selesai!";
-
-
-        captionText.textContent =
-            result.text || "Tidak ada suara yang terdeteksi.";
+            "✅ Subtitle berhasil dibuat!";
 
 
         processing = false;
@@ -709,12 +894,11 @@ async function generateCaption(){
 
         console.error(error);
 
-
         processing = false;
 
 
         status.textContent =
-            "❌ Terjadi error saat menjalankan AI.";
+            "❌ Terjadi error saat membuat subtitle.";
 
 
         captionText.textContent =
@@ -727,18 +911,80 @@ async function generateCaption(){
 
 
 /* =====================================
-   STOP
+   DOWNLOAD SRT
 ===================================== */
 
-function stopCaption(){
+function downloadSRT(){
 
-    stopRequested = true;
+    if(subtitleData.length === 0){
 
-    processing = false;
+        alert(
+            "Belum ada subtitle untuk didownload."
+        );
+
+        return;
+
+    }
 
 
-    document.getElementById("captionStatus").textContent =
-        "⏹ Proses dihentikan.";
+    let srtContent = "";
+
+
+    subtitleData.forEach(function(subtitle, index){
+
+        srtContent +=
+            (index + 1) + "\n";
+
+
+        srtContent +=
+            formatSRTTime(subtitle.start) +
+            " --> " +
+            formatSRTTime(subtitle.end) +
+            "\n";
+
+
+        srtContent +=
+            subtitle.text +
+            "\n\n";
+
+    });
+
+
+    const blob =
+        new Blob(
+            [srtContent],
+            {
+                type:
+                "application/x-subrip;charset=utf-8"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const link =
+        document.createElement("a");
+
+
+    link.href = url;
+
+
+    link.download =
+        "clipwithrin-subtitle.srt";
+
+
+    document.body.appendChild(link);
+
+
+    link.click();
+
+
+    document.body.removeChild(link);
+
+
+    URL.revokeObjectURL(url);
 
 }
 
