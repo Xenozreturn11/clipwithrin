@@ -481,14 +481,71 @@ async function generateCaption(){
 
     }
 
-    document.getElementById("captionStatus").textContent =
-        "🤖 AI sedang dipersiapkan...";
+    const status =
+        document.getElementById("captionStatus");
 
-    document.getElementById("captionText").textContent =
-        "Model AI akan dimuat pada langkah berikutnya...";
+    const captionText =
+        document.getElementById("captionText");
+
+
+    try{
+
+        status.textContent =
+            "📥 Membaca audio dari video...";
+
+        captionText.textContent =
+            "Mohon tunggu...";
+
+
+        const audioContext =
+            new AudioContext({
+                sampleRate:16000
+            });
+
+
+        const arrayBuffer =
+            await selectedFile.arrayBuffer();
+
+
+        const audioBuffer =
+            await audioContext.decodeAudioData(
+                arrayBuffer
+            );
+
+
+        status.textContent =
+            "🔊 Audio berhasil dibaca. Menyiapkan AI...";
+
+
+        const channelData =
+            audioBuffer.getChannelData(0);
+
+
+        window.audioData =
+            new Float32Array(channelData);
+
+
+        captionText.textContent =
+            "Audio siap diproses oleh Whisper AI.";
+
+        status.textContent =
+            "✅ Audio siap! Langkah berikutnya: transkripsi AI.";
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        status.textContent =
+            "❌ Video/audio tidak dapat dibaca.";
+
+        captionText.textContent =
+            "Coba gunakan video MP4 dengan audio yang normal.";
+
+    }
 
 }
-
 
 function stopCaption(){
 
