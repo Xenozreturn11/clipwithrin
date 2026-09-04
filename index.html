@@ -189,8 +189,9 @@ button{
     margin-bottom:15px;
     background:#000;
     border-radius:12px;
-    font-size:22px;
+    font-size:18px;
     line-height:1.5;
+    white-space:pre-wrap;
 }
 
 footer{
@@ -201,9 +202,14 @@ footer{
 
 </style>
 
+<!-- TRANSFORMERS.JS / WHISPER -->
 <script type="module">
-import { pipeline } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/+esm";
+
+import { pipeline } from
+"https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/+esm";
+
 window.transformersPipeline = pipeline;
+
 </script>
 
 </head>
@@ -217,6 +223,7 @@ window.transformersPipeline = pipeline;
 
     <div>My Projects</div>
 </nav>
+
 
 <section class="hero">
 
@@ -233,6 +240,7 @@ window.transformersPipeline = pipeline;
 
 
 <div class="container">
+
 
     <div class="upload-box">
 
@@ -265,11 +273,14 @@ window.transformersPipeline = pipeline;
         <div class="info" id="videoInfo"></div>
 
 
+        <!-- VIDEO CLIP CONTROLS -->
+
         <div class="controls">
 
             <label>Start Clip</label>
 
-            <input type="range"
+            <input
+                type="range"
                 id="startRange"
                 min="0"
                 value="0"
@@ -282,7 +293,8 @@ window.transformersPipeline = pipeline;
 
             <label>End Clip</label>
 
-            <input type="range"
+            <input
+                type="range"
                 id="endRange"
                 min="0"
                 value="0"
@@ -295,12 +307,21 @@ window.transformersPipeline = pipeline;
 
             <div class="buttons">
 
-                <button class="primary" onclick="previewClip()">
+                <button
+                    class="primary"
+                    onclick="previewClip()">
+
                     ▶ Preview Clip
+
                 </button>
 
-                <button class="secondary" onclick="resetVideo()">
+
+                <button
+                    class="secondary"
+                    onclick="resetVideo()">
+
                     ↺ Change Video
+
                 </button>
 
             </div>
@@ -308,31 +329,45 @@ window.transformersPipeline = pipeline;
         </div>
 
 
+        <!-- AUTO CAPTION -->
+
         <div class="caption-panel">
 
-            <h2>💬 Auto Caption</h2>
+            <h2>💬 Auto Caption AI</h2>
 
             <p id="captionStatus">
                 Upload video terlebih dahulu, lalu tekan Generate Auto Caption.
             </p>
 
+
             <div id="captionText">
                 Caption akan muncul di sini...
             </div>
 
+
             <div class="buttons">
 
-                <button class="primary" onclick="generateCaption()">
+                <button
+                    class="primary"
+                    onclick="generateCaption()">
+
                     ✨ Generate Auto Caption
+
                 </button>
 
-                <button class="secondary" onclick="stopCaption()">
+
+                <button
+                    class="secondary"
+                    onclick="stopCaption()">
+
                     ⏹ Stop
+
                 </button>
 
             </div>
 
         </div>
+
 
     </div>
 
@@ -344,23 +379,45 @@ window.transformersPipeline = pipeline;
 </footer>
 
 
+
 <script>
 
-const upload = document.getElementById("videoUpload");
-const video = document.getElementById("videoPreview");
-const editor = document.getElementById("editor");
+/* =====================================
+   VIDEO VARIABLES
+===================================== */
 
-const startRange = document.getElementById("startRange");
-const endRange = document.getElementById("endRange");
+const upload =
+    document.getElementById("videoUpload");
 
-const startTime = document.getElementById("startTime");
-const endTime = document.getElementById("endTime");
+const video =
+    document.getElementById("videoPreview");
+
+const editor =
+    document.getElementById("editor");
+
+const startRange =
+    document.getElementById("startRange");
+
+const endRange =
+    document.getElementById("endRange");
+
+const startTime =
+    document.getElementById("startTime");
+
+const endTime =
+    document.getElementById("endTime");
+
 
 let selectedFile = null;
+
 let processing = false;
 
+let stopRequested = false;
 
-/* UPLOAD VIDEO */
+
+/* =====================================
+   UPLOAD VIDEO
+===================================== */
 
 upload.addEventListener("change", function(){
 
@@ -368,16 +425,23 @@ upload.addEventListener("change", function(){
 
     if(!file) return;
 
+
     selectedFile = file;
 
-    const url = URL.createObjectURL(file);
+
+    const url =
+        URL.createObjectURL(file);
+
 
     video.src = url;
 
+
     editor.style.display = "block";
+
 
     document.getElementById("videoInfo").textContent =
         "📁 " + file.name;
+
 
     editor.scrollIntoView({
         behavior:"smooth"
@@ -386,29 +450,41 @@ upload.addEventListener("change", function(){
 });
 
 
-/* VIDEO METADATA */
+/* =====================================
+   VIDEO METADATA
+===================================== */
 
 video.addEventListener("loadedmetadata", function(){
 
     const duration = video.duration;
 
+
     startRange.max = duration;
+
     endRange.max = duration;
+
+
+    startRange.value = 0;
 
     endRange.value = duration;
 
+
     startTime.textContent = "0.0";
-    endTime.textContent = duration.toFixed(1);
+
+    endTime.textContent =
+        duration.toFixed(1);
 
 });
 
 
-/* RANGE */
+/* =====================================
+   RANGE CONTROLS
+===================================== */
 
 startRange.addEventListener("input", function(){
 
     startTime.textContent =
-        Number(this.value).toFixed(1);
+        Number(startRange.value).toFixed(1);
 
 });
 
@@ -416,36 +492,48 @@ startRange.addEventListener("input", function(){
 endRange.addEventListener("input", function(){
 
     endTime.textContent =
-        Number(this.value).toFixed(1);
+        Number(endRange.value).toFixed(1);
 
 });
 
 
-/* PREVIEW */
+/* =====================================
+   PREVIEW CLIP
+===================================== */
 
 function previewClip(){
 
     video.currentTime =
         Number(startRange.value);
 
+
     video.play();
 
 }
 
 
-/* RESET */
+/* =====================================
+   RESET VIDEO
+===================================== */
 
 function resetVideo(){
 
     video.pause();
+
+
     video.removeAttribute("src");
+
     video.load();
+
 
     upload.value = "";
 
+
     selectedFile = null;
 
+
     editor.style.display = "none";
+
 
     window.scrollTo({
         top:0,
@@ -456,7 +544,7 @@ function resetVideo(){
 
 
 /* =====================================
-   AUTO CAPTION - STEP 7.3 TEST
+   AUTO CAPTION WITH WHISPER AI
 ===================================== */
 
 async function generateCaption(){
@@ -468,22 +556,20 @@ async function generateCaption(){
         document.getElementById("captionText");
 
 
-    /* TEST PALING AWAL */
-
-    status.textContent =
-        "🚀 Tombol berhasil ditekan!";
-
-    captionText.textContent =
-        "Sedang memeriksa video...";
-
-
     if(!selectedFile){
 
         status.textContent =
             "❌ Belum ada video yang dipilih.";
 
         captionText.textContent =
-            "Silakan pilih video terlebih dahulu.";
+            "Silakan upload video terlebih dahulu.";
+
+        return;
+
+    }
+
+
+    if(processing){
 
         return;
 
@@ -494,17 +580,23 @@ async function generateCaption(){
 
         processing = true;
 
+        stopRequested = false;
+
+
+        /* STEP 1 */
+
         status.textContent =
-            "📥 Membaca file video...";
+            "📥 Membaca audio dari video...";
+
+        captionText.textContent =
+            "Mohon tunggu...";
 
 
         const arrayBuffer =
             await selectedFile.arrayBuffer();
 
 
-        status.textContent =
-            "🔊 Memproses audio video...";
-
+        /* AUDIO CONTEXT */
 
         const AudioContextClass =
             window.AudioContext ||
@@ -521,18 +613,92 @@ async function generateCaption(){
             );
 
 
+        /* STOP CHECK */
+
+        if(stopRequested){
+
+            processing = false;
+
+            return;
+
+        }
+
+
+        /* STEP 2 */
+
         status.textContent =
-            "✅ Audio berhasil dibaca!";
+            "🤖 Memuat Whisper AI...";
+
+        captionText.textContent =
+            "Pertama kali digunakan, model AI sedang diunduh. Mohon tunggu...";
+
+
+        /* WAIT FOR LIBRARY */
+
+        if(!window.transformersPipeline){
+
+            throw new Error(
+                "Library AI belum selesai dimuat. Refresh halaman lalu coba lagi."
+            );
+
+        }
+
+
+        /* LOAD WHISPER */
+
+        const transcriber =
+            await window.transformersPipeline(
+                "automatic-speech-recognition",
+                "Xenova/whisper-tiny"
+            );
+
+
+        if(stopRequested){
+
+            processing = false;
+
+            return;
+
+        }
+
+
+        /* STEP 3 */
+
+        status.textContent =
+            "🎙️ AI sedang membuat caption...";
+
+
+        const audioData =
+            audioBuffer.getChannelData(0);
+
+
+        /*
+        WHISPER EXPECTS AUDIO DATA
+        */
+
+        const result =
+            await transcriber(
+                audioData
+            );
+
+
+        if(stopRequested){
+
+            processing = false;
+
+            return;
+
+        }
+
+
+        /* RESULT */
+
+        status.textContent =
+            "✅ Auto Caption selesai!";
 
 
         captionText.textContent =
-            "Durasi audio: " +
-            audioBuffer.duration.toFixed(1) +
-            " detik. Audio siap untuk Whisper AI.";
-
-
-        window.audioData =
-            audioBuffer.getChannelData(0);
+            result.text || "Tidak ada suara yang terdeteksi.";
 
 
         processing = false;
@@ -543,22 +709,33 @@ async function generateCaption(){
 
         console.error(error);
 
+
         processing = false;
 
+
         status.textContent =
-            "❌ Error saat membaca audio.";
+            "❌ Terjadi error saat menjalankan AI.";
+
 
         captionText.textContent =
-            "Coba gunakan video MP4 lain. Browser mungkin tidak mendukung codec audio video ini.";
+            "Error: " +
+            (error.message || "Tidak diketahui");
 
     }
 
 }
 
 
+/* =====================================
+   STOP
+===================================== */
+
 function stopCaption(){
 
+    stopRequested = true;
+
     processing = false;
+
 
     document.getElementById("captionStatus").textContent =
         "⏹ Proses dihentikan.";
@@ -568,4 +745,4 @@ function stopCaption(){
 </script>
 
 </body>
-</html>
+    </html>
