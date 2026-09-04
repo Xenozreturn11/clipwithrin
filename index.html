@@ -108,11 +108,41 @@ input[type=file]{
     margin-bottom:20px;
 }
 
+/* VIDEO + SUBTITLE */
+
+.video-wrapper{
+    position:relative;
+    width:100%;
+}
+
 video{
     width:100%;
     max-height:500px;
     border-radius:15px;
     background:#000;
+    display:block;
+}
+
+/* SUBTITLE DI ATAS VIDEO */
+
+.video-subtitle{
+    position:absolute;
+    left:50%;
+    bottom:8%;
+    transform:translateX(-50%);
+    width:90%;
+    text-align:center;
+    color:white;
+    font-size:clamp(18px,4vw,28px);
+    font-weight:bold;
+    line-height:1.4;
+    text-shadow:
+        2px 2px 4px #000,
+        -2px -2px 4px #000,
+        2px -2px 4px #000,
+        -2px 2px 4px #000;
+    padding:8px 12px;
+    pointer-events:none;
 }
 
 .info{
@@ -167,6 +197,8 @@ button{
     color:white;
 }
 
+/* CAPTION PANEL */
+
 .caption-panel{
     margin-top:25px;
     padding:20px;
@@ -194,6 +226,8 @@ button{
     white-space:pre-wrap;
 }
 
+/* SUBTITLE LIST */
+
 #subtitleList{
     margin-top:15px;
 }
@@ -213,7 +247,7 @@ button{
 }
 
 .subtitle-content{
-    color:#fff;
+    color:white;
     line-height:1.5;
 }
 
@@ -229,7 +263,9 @@ footer{
 
 </style>
 
+
 <!-- TRANSFORMERS.JS -->
+
 <script type="module">
 
 import { pipeline } from
@@ -241,14 +277,17 @@ window.transformersPipeline = pipeline;
 
 </head>
 
+
 <body>
 
 <nav>
+
     <div class="logo">
         CLIP<span>WITHRIN</span>
     </div>
 
     <div>My Projects</div>
+
 </nav>
 
 
@@ -267,6 +306,9 @@ window.transformersPipeline = pipeline;
 
 
 <div class="container">
+
+
+    <!-- UPLOAD -->
 
     <div class="upload-box">
 
@@ -290,13 +332,34 @@ window.transformersPipeline = pipeline;
     </div>
 
 
+    <!-- EDITOR -->
+
     <div class="editor" id="editor">
 
         <h2>🎬 Video Editor</h2>
 
-        <video id="videoPreview" controls></video>
 
-        <div class="info" id="videoInfo"></div>
+        <!-- VIDEO + LIVE SUBTITLE -->
+
+        <div class="video-wrapper">
+
+            <video
+                id="videoPreview"
+                controls>
+            </video>
+
+            <div
+                id="videoSubtitle"
+                class="video-subtitle">
+            </div>
+
+        </div>
+
+
+        <div
+            class="info"
+            id="videoInfo">
+        </div>
 
 
         <!-- CLIP CONTROLS -->
@@ -313,7 +376,10 @@ window.transformersPipeline = pipeline;
                 step="0.1">
 
             <div class="time">
-                Start: <span id="startTime">0.0</span>s
+
+                Start:
+                <span id="startTime">0.0</span>s
+
             </div>
 
 
@@ -327,7 +393,10 @@ window.transformersPipeline = pipeline;
                 step="0.1">
 
             <div class="time">
-                End: <span id="endTime">0.0</span>s
+
+                End:
+                <span id="endTime">0.0</span>s
+
             </div>
 
 
@@ -340,6 +409,7 @@ window.transformersPipeline = pipeline;
                     ▶ Preview Clip
 
                 </button>
+
 
                 <button
                     class="secondary"
@@ -361,14 +431,21 @@ window.transformersPipeline = pipeline;
             <h2>💬 Auto Caption AI</h2>
 
             <p id="captionStatus">
-                Upload video terlebih dahulu, lalu tekan Generate Auto Caption.
+
+                Upload video terlebih dahulu,
+                lalu tekan Generate Auto Caption.
+
             </p>
 
+
             <div id="captionText">
+
                 Caption akan muncul di sini...
+
             </div>
 
-            <!-- SUBTITLE LIST -->
+
+            <!-- SUBTITLE TIMESTAMP -->
 
             <div id="subtitleList"></div>
 
@@ -406,22 +483,25 @@ window.transformersPipeline = pipeline;
 
         </div>
 
+
     </div>
 
 </div>
 
 
 <footer>
+
 © 2026 ClipWithRin
+
 </footer>
 
 
 
 <script>
 
-/* =====================================
+/* ================================
    VARIABLES
-===================================== */
+================================ */
 
 const upload =
     document.getElementById("videoUpload");
@@ -450,6 +530,9 @@ const subtitleList =
 const downloadSrtBtn =
     document.getElementById("downloadSrtBtn");
 
+const videoSubtitle =
+    document.getElementById("videoSubtitle");
+
 
 let selectedFile = null;
 
@@ -460,9 +543,9 @@ let stopRequested = false;
 let subtitleData = [];
 
 
-/* =====================================
+/* ================================
    UPLOAD VIDEO
-===================================== */
+================================ */
 
 upload.addEventListener("change", function(){
 
@@ -476,7 +559,10 @@ upload.addEventListener("change", function(){
 
     subtitleList.innerHTML = "";
 
+    videoSubtitle.textContent = "";
+
     downloadSrtBtn.style.display = "none";
+
 
     const url =
         URL.createObjectURL(file);
@@ -485,8 +571,10 @@ upload.addEventListener("change", function(){
 
     editor.style.display = "block";
 
+
     document.getElementById("videoInfo").textContent =
         "📁 " + file.name;
+
 
     editor.scrollIntoView({
         behavior:"smooth"
@@ -495,18 +583,20 @@ upload.addEventListener("change", function(){
 });
 
 
-/* =====================================
+/* ================================
    VIDEO METADATA
-===================================== */
+================================ */
 
 video.addEventListener("loadedmetadata", function(){
 
     const duration = video.duration;
 
     startRange.max = duration;
+
     endRange.max = duration;
 
     startRange.value = 0;
+
     endRange.value = duration;
 
     startTime.textContent = "0.0";
@@ -517,9 +607,9 @@ video.addEventListener("loadedmetadata", function(){
 });
 
 
-/* =====================================
-   RANGE
-===================================== */
+/* ================================
+   RANGE CONTROLS
+================================ */
 
 startRange.addEventListener("input", function(){
 
@@ -537,9 +627,9 @@ endRange.addEventListener("input", function(){
 });
 
 
-/* =====================================
-   PREVIEW
-===================================== */
+/* ================================
+   PREVIEW CLIP
+================================ */
 
 function previewClip(){
 
@@ -551,9 +641,9 @@ function previewClip(){
 }
 
 
-/* =====================================
-   RESET
-===================================== */
+/* ================================
+   RESET VIDEO
+================================ */
 
 function resetVideo(){
 
@@ -571,6 +661,8 @@ function resetVideo(){
 
     subtitleList.innerHTML = "";
 
+    videoSubtitle.textContent = "";
+
     downloadSrtBtn.style.display = "none";
 
     editor.style.display = "none";
@@ -578,15 +670,17 @@ function resetVideo(){
 }
 
 
-/* =====================================
-   TIME FORMAT
-===================================== */
+/* ================================
+   FORMAT SRT TIME
+================================ */
 
 function formatSRTTime(seconds){
 
-    if(seconds === null ||
-       seconds === undefined ||
-       !isFinite(seconds)){
+    if(
+        seconds === null ||
+        seconds === undefined ||
+        !isFinite(seconds)
+    ){
 
         seconds = 0;
 
@@ -597,35 +691,41 @@ function formatSRTTime(seconds){
         Math.floor(seconds / 3600);
 
     const minutes =
-        Math.floor((seconds % 3600) / 60);
+        Math.floor(
+            (seconds % 3600) / 60
+        );
 
     const secs =
         Math.floor(seconds % 60);
 
     const milliseconds =
         Math.floor(
-            (seconds - Math.floor(seconds)) * 1000
+            (seconds - Math.floor(seconds))
+            * 1000
         );
 
 
-    return String(hours).padStart(2,"0") + ":" +
-           String(minutes).padStart(2,"0") + ":" +
-           String(secs).padStart(2,"0") + "," +
-           String(milliseconds).padStart(3,"0");
+    return String(hours).padStart(2,"0")
+        + ":" +
+        String(minutes).padStart(2,"0")
+        + ":" +
+        String(secs).padStart(2,"0")
+        + "," +
+        String(milliseconds).padStart(3,"0");
 
 }
 
 
-/* =====================================
+/* ================================
    DISPLAY SUBTITLES
-===================================== */
+================================ */
 
 function displaySubtitles(){
 
     subtitleList.innerHTML = "";
 
 
-    subtitleData.forEach(function(subtitle, index){
+    subtitleData.forEach(function(subtitle){
 
         const item =
             document.createElement("div");
@@ -641,8 +741,8 @@ function displaySubtitles(){
             "subtitle-time";
 
         time.textContent =
-            formatSRTTime(subtitle.start) +
-            " → " +
+            formatSRTTime(subtitle.start)
+            + " → " +
             formatSRTTime(subtitle.end);
 
 
@@ -667,9 +767,53 @@ function displaySubtitles(){
 }
 
 
-/* =====================================
-   AUTO CAPTION WITH TIMESTAMPS
-===================================== */
+/* ================================
+   LIVE SUBTITLE ON VIDEO
+================================ */
+
+video.addEventListener("timeupdate", function(){
+
+    if(subtitleData.length === 0){
+
+        videoSubtitle.textContent = "";
+
+        return;
+
+    }
+
+
+    const currentTime =
+        video.currentTime;
+
+
+    const activeSubtitle =
+        subtitleData.find(function(subtitle){
+
+            return (
+                currentTime >= subtitle.start &&
+                currentTime <= subtitle.end
+            );
+
+        });
+
+
+    if(activeSubtitle){
+
+        videoSubtitle.textContent =
+            activeSubtitle.text;
+
+    }else{
+
+        videoSubtitle.textContent = "";
+
+    }
+
+});
+
+
+/* ================================
+   AUTO CAPTION WHISPER AI
+================================ */
 
 async function generateCaption(){
 
@@ -706,6 +850,8 @@ async function generateCaption(){
         subtitleData = [];
 
         subtitleList.innerHTML = "";
+
+        videoSubtitle.textContent = "";
 
         downloadSrtBtn.style.display = "none";
 
@@ -748,7 +894,6 @@ async function generateCaption(){
         status.textContent =
             "🤖 Memuat Whisper AI...";
 
-
         captionText.textContent =
             "Model AI sedang dipersiapkan...";
 
@@ -764,8 +909,11 @@ async function generateCaption(){
 
         const transcriber =
             await window.transformersPipeline(
+
                 "automatic-speech-recognition",
+
                 "Xenova/whisper-tiny"
+
             );
 
 
@@ -786,16 +934,15 @@ async function generateCaption(){
             audioBuffer.getChannelData(0);
 
 
-        /*
-        RETURN TIMESTAMPS
-        */
-
         const result =
             await transcriber(
+
                 audioData,
+
                 {
-                    return_timestamps: true
+                    return_timestamps:true
                 }
+
             );
 
 
@@ -813,12 +960,12 @@ async function generateCaption(){
             "Tidak ada suara yang terdeteksi.";
 
 
-        /*
-        CONVERT WHISPER CHUNKS
-        */
+        /* CREATE SUBTITLE DATA */
 
-        if(result.chunks &&
-           result.chunks.length > 0){
+        if(
+            result.chunks &&
+            result.chunks.length > 0
+        ){
 
             result.chunks.forEach(function(chunk){
 
@@ -833,7 +980,7 @@ async function generateCaption(){
 
                     end:
                         timestamp[1] ||
-                        timestamp[0] + 2,
+                        ((timestamp[0] || 0) + 2),
 
                     text:
                         chunk.text.trim()
@@ -845,13 +992,12 @@ async function generateCaption(){
         }
 
 
-        /*
-        FALLBACK
-        Jika model tidak memberikan chunks
-        */
+        /* FALLBACK */
 
-        if(subtitleData.length === 0 &&
-           result.text){
+        if(
+            subtitleData.length === 0 &&
+            result.text
+        ){
 
             subtitleData.push({
 
@@ -903,16 +1049,38 @@ async function generateCaption(){
 
         captionText.textContent =
             "Error: " +
-            (error.message || "Tidak diketahui");
+            (
+                error.message ||
+                "Tidak diketahui"
+            );
 
     }
 
 }
 
 
-/* =====================================
+/* ================================
+   STOP
+================================ */
+
+function stopCaption(){
+
+    stopRequested = true;
+
+    processing = false;
+
+
+    document.getElementById(
+        "captionStatus"
+    ).textContent =
+        "⏹ Proses dihentikan.";
+
+}
+
+
+/* ================================
    DOWNLOAD SRT
-===================================== */
+================================ */
 
 function downloadSRT(){
 
@@ -930,33 +1098,39 @@ function downloadSRT(){
     let srtContent = "";
 
 
-    subtitleData.forEach(function(subtitle, index){
+    subtitleData.forEach(function(
+        subtitle,
+        index
+    ){
 
         srtContent +=
             (index + 1) + "\n";
 
 
         srtContent +=
-            formatSRTTime(subtitle.start) +
-            " --> " +
-            formatSRTTime(subtitle.end) +
-            "\n";
+            formatSRTTime(subtitle.start)
+            + " --> " +
+            formatSRTTime(subtitle.end)
+            + "\n";
 
 
         srtContent +=
-            subtitle.text +
-            "\n\n";
+            subtitle.text
+            + "\n\n";
 
     });
 
 
     const blob =
         new Blob(
+
             [srtContent],
+
             {
                 type:
                 "application/x-subrip;charset=utf-8"
             }
+
         );
 
 
@@ -970,16 +1144,13 @@ function downloadSRT(){
 
     link.href = url;
 
-
     link.download =
         "clipwithrin-subtitle.srt";
 
 
     document.body.appendChild(link);
 
-
     link.click();
-
 
     document.body.removeChild(link);
 
