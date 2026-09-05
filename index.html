@@ -3,22 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>ClipWithRin — AI Video Clipper</title>
 
 <style>
+
 :root{
   --bg:#080a08;
   --card:#101410;
   --card2:#151a15;
-  --text:#f2f5ef;
-  --muted:#9aa39a;
+  --text:#f4f7f1;
+  --muted:#9ca59b;
   --accent:#e3fc87;
-  --border:#252b25;
+  --border:#272d27;
   --danger:#ff6b6b;
 }
 
 *{
   box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
 }
 
 body{
@@ -28,19 +34,25 @@ body{
   font-family:Arial,Helvetica,sans-serif;
 }
 
+/* HEADER */
+
 header{
-  padding:22px 18px;
-  border-bottom:1px solid var(--border);
   position:sticky;
   top:0;
-  background:rgba(8,10,8,.94);
-  backdrop-filter:blur(12px);
-  z-index:20;
+  z-index:50;
+
+  padding:22px 18px;
+
+  background:rgba(8,10,8,.95);
+  backdrop-filter:blur(15px);
+
+  border-bottom:1px solid var(--border);
 }
 
 .logo{
-  font-size:22px;
-  font-weight:800;
+  font-size:28px;
+  font-weight:900;
+  letter-spacing:-1.5px;
 }
 
 .logo span{
@@ -48,27 +60,32 @@ header{
 }
 
 .header-sub{
+  margin-top:5px;
   color:var(--muted);
   font-size:12px;
-  margin-top:5px;
 }
 
+/* CONTAINER */
+
 .container{
-  width:min(1000px,92%);
-  margin:25px auto 60px;
+  width:min(1000px,94%);
+  margin:25px auto 70px;
 }
+
+/* CARD */
 
 .card{
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:18px;
+  border-radius:20px;
   padding:20px;
   margin-bottom:18px;
+  box-shadow:0 8px 30px rgba(0,0,0,.15);
 }
 
 h2{
   margin:0 0 8px;
-  font-size:20px;
+  font-size:22px;
 }
 
 h3{
@@ -79,25 +96,41 @@ h3{
 .desc{
   color:var(--muted);
   font-size:13px;
-  line-height:1.6;
+  line-height:1.65;
+}
+
+/* UPLOAD */
+
+.upload-box{
+  margin-top:16px;
+  padding:18px;
+  border:1px dashed #414941;
+  border-radius:15px;
+  background:var(--card2);
 }
 
 input[type=file]{
   width:100%;
-  padding:14px;
-  border:1px dashed #3a423a;
-  border-radius:12px;
-  background:var(--card2);
-  color:var(--text);
+  color:white;
+  font-size:14px;
+}
+
+/* VIDEO */
+
+.video-wrapper{
+  margin-top:18px;
+  position:relative;
 }
 
 video{
+  display:block;
   width:100%;
-  max-height:560px;
-  margin-top:16px;
-  border-radius:14px;
+  max-height:580px;
+  border-radius:16px;
   background:#000;
 }
+
+/* CONTROLS */
 
 .controls{
   display:grid;
@@ -107,27 +140,31 @@ video{
 }
 
 .control{
+  padding:14px;
   background:var(--card2);
   border:1px solid var(--border);
-  border-radius:12px;
-  padding:13px;
+  border-radius:14px;
 }
 
 .control label{
   display:block;
-  font-size:12px;
+  margin-bottom:8px;
   color:var(--muted);
-  margin-bottom:7px;
+  font-size:12px;
 }
 
 input[type=number],
 select{
   width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #303730;
-  background:#0b0e0b;
+  padding:13px;
+  border-radius:11px;
+
+  border:1px solid #343b34;
+
+  background:#0a0d0a;
   color:white;
+
+  font-size:14px;
   outline:none;
 }
 
@@ -135,6 +172,8 @@ input[type=number]:focus,
 select:focus{
   border-color:var(--accent);
 }
+
+/* BUTTONS */
 
 .buttons{
   display:flex;
@@ -144,13 +183,18 @@ select:focus{
 }
 
 button{
+  padding:13px 17px;
+
   border:0;
-  border-radius:11px;
-  padding:12px 16px;
-  font-weight:700;
-  cursor:pointer;
+  border-radius:12px;
+
   background:#252b25;
   color:white;
+
+  font-size:14px;
+  font-weight:800;
+
+  cursor:pointer;
 }
 
 button.primary{
@@ -167,126 +211,290 @@ button:disabled{
   cursor:not-allowed;
 }
 
+/* STATUS */
+
 .status{
-  margin-top:14px;
-  padding:12px;
-  border-radius:10px;
+  margin-top:15px;
+
+  padding:13px;
+
+  border-radius:12px;
+
   background:#0b0f0b;
+
   color:var(--muted);
+
   font-size:13px;
-  line-height:1.5;
+  line-height:1.55;
+
+  word-break:break-word;
 }
 
+/* BADGE */
+
+.badge{
+  display:inline-block;
+
+  margin-bottom:10px;
+  padding:6px 10px;
+
+  border-radius:30px;
+
+  background:#202720;
+
+  color:var(--accent);
+
+  font-size:11px;
+  font-weight:800;
+}
+
+/* PROGRESS */
+
 .progress{
+  display:none;
+
   width:100%;
   height:8px;
+
+  margin-top:13px;
+
   border-radius:20px;
-  background:#252b25;
+
+  background:#282e28;
+
   overflow:hidden;
-  margin-top:12px;
-  display:none;
 }
 
 .progress-bar{
-  height:100%;
   width:0%;
+  height:100%;
+
   background:var(--accent);
-  transition:.2s;
+
+  transition:width .25s ease;
 }
 
+/* SUBTITLE */
+
 .subtitle-list{
-  margin-top:15px;
   display:flex;
   flex-direction:column;
-  gap:8px;
-  max-height:420px;
+  gap:9px;
+
+  max-height:450px;
+
+  margin-top:15px;
+
   overflow:auto;
 }
 
 .subtitle-item{
-  padding:12px;
-  background:var(--card2);
+  padding:13px;
+
   border:1px solid var(--border);
-  border-radius:10px;
+  border-radius:12px;
+
+  background:var(--card2);
 }
 
 .subtitle-time{
+  margin-bottom:6px;
+
   color:var(--accent);
+
   font-size:11px;
-  margin-bottom:5px;
+  font-weight:700;
 }
 
 .subtitle-text{
+  color:white;
+
   font-size:14px;
-  line-height:1.5;
+  line-height:1.55;
 }
 
+/* TRANSLATION */
+
 .translate-panel{
-  margin-top:18px;
+  margin-top:17px;
+
   padding:16px;
+
   border:1px solid var(--border);
-  border-radius:14px;
+  border-radius:15px;
+
   background:var(--card2);
 }
 
 .translate-row{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:10px;
+  gap:12px;
 }
 
-.badge{
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:20px;
-  background:#202620;
+.translate-label{
+  display:block;
+
+  margin-bottom:7px;
+
+  color:var(--muted);
+
+  font-size:12px;
+}
+
+/* LIVE SUBTITLE */
+
+.live-box{
+  position:relative;
+
+  min-height:150px;
+
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+
+  padding:20px;
+
+  background:#000;
+
+  border-radius:15px;
+
+  overflow:hidden;
+}
+
+.live-subtitle{
+  width:100%;
+
+  text-align:center;
+
+  color:white;
+
+  font-size:22px;
+  font-weight:900;
+
+  line-height:1.4;
+
+  text-shadow:
+    0 2px 4px #000,
+    0 2px 10px #000;
+
+  transition:.15s;
+}
+
+/* INFO */
+
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:15px;
+}
+
+.info{
+  padding:14px;
+
+  border-radius:12px;
+
+  background:var(--card2);
+
+  border:1px solid var(--border);
+}
+
+.info-title{
   color:var(--accent);
   font-size:11px;
-  margin-bottom:10px;
+  font-weight:800;
 }
+
+.info-value{
+  margin-top:5px;
+  font-size:13px;
+}
+
+/* FOOTER */
 
 footer{
+  padding:25px;
+
   text-align:center;
+
   color:#687068;
+
   font-size:11px;
-  padding:20px;
 }
 
+/* MOBILE */
+
 @media(max-width:650px){
-  .controls,
-  .translate-row{
-    grid-template-columns:1fr;
-  }
 
   .container{
     width:94%;
   }
 
   .card{
-    padding:15px;
+    padding:16px;
+    border-radius:18px;
   }
+
+  .controls,
+  .translate-row{
+    grid-template-columns:1fr;
+  }
+
+  .info-grid{
+    grid-template-columns:1fr;
+  }
+
+  .buttons button{
+    flex:1 1 auto;
+  }
+
+  .live-subtitle{
+    font-size:18px;
+  }
+
 }
+
 </style>
 </head>
 
 <body>
 
+<!-- =====================================================
+HEADER
+===================================================== -->
+
 <header>
-  <div class="logo">ClipWith<span>Rin</span></div>
-  <div class="header-sub">AI Video Clipper • Auto Caption • Subtitle Translation</div>
+
+  <div class="logo">
+    ClipWith<span>Rin</span>
+  </div>
+
+  <div class="header-sub">
+    AI Video Clipper • Auto Caption • Subtitle Translation
+  </div>
+
 </header>
+
 
 <div class="container">
 
-  <!-- UPLOAD -->
-  <div class="card">
 
-    <h2>🎬 Upload Video</h2>
+<!-- =====================================================
+UPLOAD VIDEO
+===================================================== -->
 
-    <p class="desc">
-      Upload video dari perangkat kamu. Pemrosesan caption dilakukan langsung
-      di browser menggunakan AI.
-    </p>
+<div class="card">
+
+  <h2>🎬 Upload Video</h2>
+
+  <p class="desc">
+    Upload video dari perangkat kamu untuk mulai membuat clip
+    dan subtitle otomatis.
+  </p>
+
+
+  <div class="upload-box">
 
     <input
       type="file"
@@ -294,272 +502,310 @@ footer{
       accept="video/*"
     >
 
+  </div>
+
+
+  <div class="video-wrapper">
+
     <video
       id="video"
       controls
       playsinline
-      crossorigin="anonymous"
+      preload="metadata"
     ></video>
 
-    <div class="controls">
+  </div>
 
-      <div class="control">
-        <label>Start Time (detik)</label>
-        <input
-          type="number"
-          id="startTime"
-          min="0"
-          value="0"
-          step="0.1"
-        >
-      </div>
 
-      <div class="control">
-        <label>End Time (detik)</label>
-        <input
-          type="number"
-          id="endTime"
-          min="0"
-          value="30"
-          step="0.1"
-        >
-      </div>
+  <div class="controls">
+
+    <div class="control">
+
+      <label>
+        Start Time (detik)
+      </label>
+
+      <input
+        type="number"
+        id="startTime"
+        value="0"
+        min="0"
+        step="0.1"
+      >
 
     </div>
 
-    <div class="buttons">
 
-      <button
-        class="primary"
-        id="clipBtn"
-        onclick="setClipRange()"
+    <div class="control">
+
+      <label>
+        End Time (detik)
+      </label>
+
+      <input
+        type="number"
+        id="endTime"
+        value="30"
+        min="0"
+        step="0.1"
       >
-        ✂️ Set Clip Range
-      </button>
 
-      <button
-        onclick="playClip()"
-      >
-        ▶️ Play Clip
-      </button>
-
-    </div>
-
-    <div
-      class="status"
-      id="videoStatus"
-    >
-      Belum ada video.
     </div>
 
   </div>
 
 
-  <!-- AI CAPTION -->
+  <div class="buttons">
 
-  <div class="card">
-
-    <span class="badge">AI • WHISPER</span>
-
-    <h2>💬 Auto Caption AI</h2>
-
-    <p class="desc">
-      Buat subtitle otomatis dari suara di dalam video.
-      Model Whisper dijalankan langsung di browser.
-    </p>
-
-    <div class="buttons">
-
-      <button
-        class="primary"
-        id="captionBtn"
-        onclick="generateCaptions()"
-      >
-        🤖 Generate Auto Caption
-      </button>
-
-    </div>
-
-    <div
-      class="status"
-      id="captionStatus"
+    <button
+      class="primary"
+      id="setClipBtn"
     >
-      AI belum dijalankan.
-    </div>
+      ✂️ Set Clip Range
+    </button>
 
-    <div
-      class="progress"
-      id="progress"
+    <button
+      id="playClipBtn"
     >
-      <div
-        class="progress-bar"
-        id="progressBar"
-      ></div>
-    </div>
+      ▶️ Play Clip
+    </button>
+
+  </div>
+
+
+  <div
+    class="status"
+    id="videoStatus"
+  >
+    Belum ada video.
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+AI CAPTION
+===================================================== -->
+
+<div class="card">
+
+  <span class="badge">
+    AI • WHISPER
+  </span>
+
+  <h2>
+    💬 Auto Caption AI
+  </h2>
+
+  <p class="desc">
+    Whisper akan membaca audio dari video dan membuat
+    subtitle secara otomatis.
+  </p>
+
+
+  <div class="buttons">
+
+    <button
+      class="primary"
+      id="captionBtn"
+    >
+      🤖 Generate Auto Caption
+    </button>
+
+  </div>
+
+
+  <div
+    class="status"
+    id="captionStatus"
+  >
+    AI belum dijalankan.
+  </div>
+
+
+  <div
+    class="progress"
+    id="progress"
+  >
 
     <div
-      class="subtitle-list"
-      id="subtitleList"
+      class="progress-bar"
+      id="progressBar"
     ></div>
 
+  </div>
+
+
+  <div
+    class="subtitle-list"
+    id="subtitleList"
+  ></div>
+
+
+  <div class="buttons">
+
+    <button
+      class="primary"
+      id="downloadSrtBtn"
+      disabled
+    >
+      ⬇ Download Original SRT
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+TRANSLATION
+===================================================== -->
+
+<div class="card">
+
+  <span class="badge">
+    TRANSLATION
+  </span>
+
+  <h2>
+    🌐 Translate Subtitle
+  </h2>
+
+  <p class="desc">
+    Terjemahkan subtitle yang sudah dibuat ke bahasa lain.
+  </p>
+
+
+  <div class="translate-panel">
+
+    <div class="translate-row">
+
+      <div>
+
+        <label class="translate-label">
+          Source Language
+        </label>
+
+        <select id="sourceLanguage">
+
+          <option value="id">
+            🇮🇩 Indonesian
+          </option>
+
+          <option value="en">
+            🇺🇸 English
+          </option>
+
+          <option value="ja">
+            🇯🇵 Japanese
+          </option>
+
+          <option value="ko">
+            🇰🇷 Korean
+          </option>
+
+          <option value="es">
+            🇪🇸 Spanish
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div>
+
+        <label class="translate-label">
+          Target Language
+        </label>
+
+        <select id="targetLanguage">
+
+          <option value="en">
+            🇺🇸 English
+          </option>
+
+          <option value="id">
+            🇮🇩 Indonesian
+          </option>
+
+          <option value="ja">
+            🇯🇵 Japanese
+          </option>
+
+          <option value="ko">
+            🇰🇷 Korean
+          </option>
+
+          <option value="es">
+            🇪🇸 Spanish
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
     <div class="buttons">
 
       <button
-        id="downloadSrtBtn"
         class="primary"
-        onclick="downloadSRT(false)"
+        id="translateBtn"
         disabled
       >
-        ⬇ Download Original SRT
+        🌐 Translate Subtitle
       </button>
 
     </div>
 
-  </div>
-
-
-  <!-- TRANSLATION -->
-
-  <div class="card">
-
-    <span class="badge">TRANSLATION</span>
-
-    <h2>🌐 Translate Subtitle</h2>
-
-    <p class="desc">
-      Terjemahkan subtitle yang sudah dibuat ke bahasa lain.
-    </p>
-
-    <div class="translate-panel">
-
-      <h3>Language</h3>
-
-      <div class="translate-row">
-
-        <div>
-          <label class="desc">Source</label>
-
-          <select id="sourceLanguage">
-
-            <option value="id">
-              🇮🇩 Indonesian
-            </option>
-
-            <option value="en">
-              🇺🇸 English
-            </option>
-
-            <option value="ja">
-              🇯🇵 Japanese
-            </option>
-
-            <option value="ko">
-              🇰🇷 Korean
-            </option>
-
-            <option value="es">
-              🇪🇸 Spanish
-            </option>
-
-          </select>
-
-        </div>
-
-        <div>
-
-          <label class="desc">Target</label>
-
-          <select id="targetLanguage">
-
-            <option value="en">
-              🇺🇸 English
-            </option>
-
-            <option value="id">
-              🇮🇩 Indonesian
-            </option>
-
-            <option value="ja">
-              🇯🇵 Japanese
-            </option>
-
-            <option value="ko">
-              🇰🇷 Korean
-            </option>
-
-            <option value="es">
-              🇪🇸 Spanish
-            </option>
-
-          </select>
-
-        </div>
-
-      </div>
-
-      <div class="buttons">
-
-        <button
-          class="primary"
-          id="translateBtn"
-          onclick="translateSubtitles()"
-          disabled
-        >
-          🌐 Translate Subtitle
-        </button>
-
-      </div>
-
-      <div
-        class="status"
-        id="translateStatus"
-      >
-        Generate subtitle terlebih dahulu.
-      </div>
-
-    </div>
-
-    <div class="buttons">
-
-      <button
-        id="downloadTranslatedSrtBtn"
-        class="primary"
-        onclick="downloadSRT(true)"
-        disabled
-      >
-        ⬇ Download Translated SRT
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <!-- LIVE SUBTITLE -->
-
-  <div class="card">
-
-    <h2>🎞️ Live Subtitle</h2>
-
-    <p class="desc">
-      Subtitle akan ditampilkan berdasarkan timestamp saat video diputar.
-    </p>
 
     <div
+      class="status"
+      id="translateStatus"
+    >
+      Generate subtitle terlebih dahulu.
+    </div>
+
+  </div>
+
+
+  <div class="buttons">
+
+    <button
+      class="primary"
+      id="downloadTranslatedSrtBtn"
+      disabled
+    >
+      ⬇ Download Translated SRT
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+LIVE SUBTITLE
+===================================================== -->
+
+<div class="card">
+
+  <h2>
+    🎞️ Live Subtitle
+  </h2>
+
+  <p class="desc">
+    Subtitle akan muncul mengikuti posisi video.
+  </p>
+
+
+  <div class="live-box">
+
+    <div
+      class="live-subtitle"
       id="liveSubtitle"
-      style="
-        margin-top:15px;
-        min-height:60px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        text-align:center;
-        padding:15px;
-        background:#000;
-        border-radius:12px;
-        font-size:20px;
-        font-weight:700;
-      "
     >
       —
     </div>
@@ -568,38 +814,117 @@ footer{
 
 </div>
 
+
+<!-- =====================================================
+PROJECT INFO
+===================================================== -->
+
+<div class="card">
+
+  <h2>
+    ⚡ ClipWithRin
+  </h2>
+
+  <p class="desc">
+    AI video tools yang berjalan langsung di browser.
+    Video tidak perlu di-upload ke server untuk proses caption.
+  </p>
+
+
+  <div class="info-grid">
+
+    <div class="info">
+
+      <div class="info-title">
+        VIDEO
+      </div>
+
+      <div
+        class="info-value"
+        id="infoVideo"
+      >
+        Belum dipilih
+      </div>
+
+    </div>
+
+
+    <div class="info">
+
+      <div class="info-title">
+        DURATION
+      </div>
+
+      <div
+        class="info-value"
+        id="infoDuration"
+      >
+        —
+      </div>
+
+    </div>
+
+
+    <div class="info">
+
+      <div class="info-title">
+        SUBTITLE
+      </div>
+
+      <div
+        class="info-value"
+        id="infoSubtitle"
+      >
+        0 segment
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+</div>
+
+
 <footer>
-  ClipWithRin • Browser AI Video Tools
+
+  ClipWithRin • AI Video Tools
+
 </footer>
 
 
-<!-- TRANSFORMERS.JS -->
+<!-- =====================================================
+MAIN JAVASCRIPT
+===================================================== -->
 
-<script type="module">
+<script>
 
-import {
-  pipeline,
-  env
-} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1";
+"use strict";
 
 
 /* =====================================================
-   GLOBAL
+GLOBAL VARIABLES
 ===================================================== */
 
 let videoFile = null;
+
 let videoURL = null;
 
 let subtitleData = [];
 
-let transcriber = null;
+let whisperModel = null;
 
 let clipStart = 0;
+
 let clipEnd = 30;
+
+let isGenerating = false;
 
 
 /* =====================================================
-   DOM
+DOM
 ===================================================== */
 
 const videoInput =
@@ -617,14 +942,17 @@ const startTime =
 const endTime =
   document.getElementById("endTime");
 
+const setClipBtn =
+  document.getElementById("setClipBtn");
+
+const playClipBtn =
+  document.getElementById("playClipBtn");
+
 const captionBtn =
   document.getElementById("captionBtn");
 
 const captionStatus =
   document.getElementById("captionStatus");
-
-const subtitleList =
-  document.getElementById("subtitleList");
 
 const progress =
   document.getElementById("progress");
@@ -632,8 +960,17 @@ const progress =
 const progressBar =
   document.getElementById("progressBar");
 
+const subtitleList =
+  document.getElementById("subtitleList");
+
 const downloadSrtBtn =
   document.getElementById("downloadSrtBtn");
+
+const sourceLanguage =
+  document.getElementById("sourceLanguage");
+
+const targetLanguage =
+  document.getElementById("targetLanguage");
 
 const translateBtn =
   document.getElementById("translateBtn");
@@ -642,155 +979,395 @@ const translateStatus =
   document.getElementById("translateStatus");
 
 const downloadTranslatedSrtBtn =
-  document.getElementById("downloadTranslatedSrtBtn");
-
-const sourceLanguage =
-  document.getElementById("sourceLanguage");
-
-const targetLanguage =
-  document.getElementById("targetLanguage");
+  document.getElementById(
+    "downloadTranslatedSrtBtn"
+  );
 
 const liveSubtitle =
-  document.getElementById("liveSubtitle");
+  document.getElementById(
+    "liveSubtitle"
+  );
+
+const infoVideo =
+  document.getElementById(
+    "infoVideo"
+  );
+
+const infoDuration =
+  document.getElementById(
+    "infoDuration"
+  );
+
+const infoSubtitle =
+  document.getElementById(
+    "infoSubtitle"
+  );
 
 
 /* =====================================================
-   UPLOAD VIDEO
+INITIAL VIDEO STATE
+===================================================== */
+
+video.style.display = "none";
+
+
+/* =====================================================
+UPLOAD VIDEO
 ===================================================== */
 
 videoInput.addEventListener(
   "change",
   function(){
 
-    const file =
-      this.files[0];
+    const file = this.files &&
+                 this.files[0];
 
     if(!file){
       return;
     }
 
+
+    /* Save file */
+
     videoFile = file;
 
+
+    /* Remove previous URL */
+
     if(videoURL){
-      URL.revokeObjectURL(videoURL);
+
+      URL.revokeObjectURL(
+        videoURL
+      );
+
     }
 
+
+    /* Create new URL */
+
     videoURL =
-      URL.createObjectURL(file);
+      URL.createObjectURL(
+        videoFile
+      );
+
+
+    /* Reset video */
+
+    video.pause();
+
+    video.removeAttribute("src");
+
+    video.load();
+
+
+    /* Set source */
 
     video.src =
       videoURL;
 
-    video.load();
+
+    /* Show player */
+
+    video.style.display =
+      "block";
+
+
+    /* Reset subtitles */
 
     subtitleData = [];
 
     subtitleList.innerHTML = "";
 
-    downloadSrtBtn.disabled = true;
+    infoSubtitle.textContent =
+      "0 segment";
 
-    translateBtn.disabled = true;
 
-    downloadTranslatedSrtBtn.disabled = true;
+    /* Reset buttons */
+
+    downloadSrtBtn.disabled =
+      true;
+
+    translateBtn.disabled =
+      true;
+
+    downloadTranslatedSrtBtn.disabled =
+      true;
+
+
+    /* Update information */
+
+    infoVideo.textContent =
+      file.name;
+
+    videoStatus.textContent =
+      "⏳ Video sedang dimuat...";
+
+
+    captionStatus.textContent =
+      "AI belum dijalankan.";
 
     translateStatus.textContent =
       "Generate subtitle terlebih dahulu.";
 
-    videoStatus.textContent =
-      "Video berhasil dimuat: " + file.name;
+
+    /*
+      Force browser to load metadata.
+    */
+
+    video.load();
 
   }
 );
 
 
 /* =====================================================
-   VIDEO METADATA
+VIDEO METADATA LOADED
 ===================================================== */
 
 video.addEventListener(
   "loadedmetadata",
   function(){
 
+    if(!Number.isFinite(video.duration)){
+      return;
+    }
+
+
+    const duration =
+      video.duration;
+
+
+    /* Start */
+
+    startTime.value =
+      "0";
+
+
+    /* End */
+
     endTime.value =
-      Math.min(30, video.duration).toFixed(1);
+      Math.min(
+        30,
+        duration
+      ).toFixed(1);
+
+
+    clipStart =
+      0;
+
+    clipEnd =
+      Math.min(
+        30,
+        duration
+      );
+
+
+    /* Status */
 
     videoStatus.textContent =
-      "Durasi video: "
-      + formatSeconds(video.duration);
+      "✅ Video berhasil dimuat • Durasi "
+      + formatDuration(duration);
+
+
+    infoDuration.textContent =
+      formatDuration(duration);
 
   }
 );
 
 
 /* =====================================================
-   CLIP RANGE
+VIDEO ERROR
 ===================================================== */
 
-window.setClipRange =
-function(){
+video.addEventListener(
+  "error",
+  function(){
 
-  if(!videoFile){
-    alert("Upload video terlebih dahulu.");
-    return;
+    const error =
+      video.error;
+
+    videoStatus.textContent =
+      "❌ Browser tidak dapat memutar format video ini.";
+
+    if(error){
+      console.warn(
+        "Video error:",
+        error
+      );
+    }
+
   }
-
-  clipStart =
-    Number(startTime.value);
-
-  clipEnd =
-    Number(endTime.value);
-
-  if(
-    clipStart < 0 ||
-    clipEnd <= clipStart ||
-    clipEnd > video.duration
-  ){
-
-    alert(
-      "Range clip tidak valid."
-    );
-
-    return;
-  }
-
-  videoStatus.textContent =
-    "Clip range: "
-    + formatSeconds(clipStart)
-    + " → "
-    + formatSeconds(clipEnd);
-
-};
-
-
-window.playClip =
-function(){
-
-  if(!videoFile){
-    alert("Upload video terlebih dahulu.");
-    return;
-  }
-
-  clipStart =
-    Number(startTime.value);
-
-  clipEnd =
-    Number(endTime.value);
-
-  if(clipEnd <= clipStart){
-    alert("End time harus lebih besar dari Start time.");
-    return;
-  }
-
-  video.currentTime =
-    clipStart;
-
-  video.play();
-
-};
+);
 
 
 /* =====================================================
-   STOP VIDEO AT END
+SET CLIP RANGE
+===================================================== */
+
+setClipBtn.addEventListener(
+  "click",
+  function(){
+
+    if(!videoFile){
+
+      alert(
+        "Upload video terlebih dahulu."
+      );
+
+      return;
+    }
+
+
+    const start =
+      Number(
+        startTime.value
+      );
+
+    const end =
+      Number(
+        endTime.value
+      );
+
+
+    if(
+      !Number.isFinite(start) ||
+      !Number.isFinite(end)
+    ){
+
+      alert(
+        "Masukkan waktu yang valid."
+      );
+
+      return;
+
+    }
+
+
+    if(start < 0){
+
+      alert(
+        "Start time tidak boleh kurang dari 0."
+      );
+
+      return;
+
+    }
+
+
+    if(end <= start){
+
+      alert(
+        "End time harus lebih besar dari Start time."
+      );
+
+      return;
+
+    }
+
+
+    if(
+      video.duration &&
+      end > video.duration
+    ){
+
+      alert(
+        "End time melebihi durasi video."
+      );
+
+      return;
+
+    }
+
+
+    clipStart =
+      start;
+
+    clipEnd =
+      end;
+
+
+    video.currentTime =
+      clipStart;
+
+
+    videoStatus.textContent =
+      "✂️ Clip range ditetapkan: "
+      + formatDuration(clipStart)
+      + " → "
+      + formatDuration(clipEnd);
+
+  }
+);
+
+
+/* =====================================================
+PLAY CLIP
+===================================================== */
+
+playClipBtn.addEventListener(
+  "click",
+  function(){
+
+    if(!videoFile){
+
+      alert(
+        "Upload video terlebih dahulu."
+      );
+
+      return;
+
+    }
+
+
+    const start =
+      Number(
+        startTime.value
+      );
+
+    const end =
+      Number(
+        endTime.value
+      );
+
+
+    if(end <= start){
+
+      alert(
+        "End time harus lebih besar dari Start time."
+      );
+
+      return;
+
+    }
+
+
+    clipStart =
+      start;
+
+    clipEnd =
+      end;
+
+
+    video.currentTime =
+      clipStart;
+
+
+    video.play().catch(
+      error => {
+        console.warn(
+          "Play error:",
+          error
+        );
+      }
+    );
+
+  }
+);
+
+
+/* =====================================================
+STOP AT CLIP END
 ===================================================== */
 
 video.addEventListener(
@@ -798,13 +1375,14 @@ video.addEventListener(
   function(){
 
     if(
-      Number(endTime.value) > 0 &&
-      video.currentTime >= Number(endTime.value)
+      video.currentTime >= clipEnd &&
+      !video.paused
     ){
 
       video.pause();
 
     }
+
 
     updateLiveSubtitle();
 
@@ -813,464 +1391,93 @@ video.addEventListener(
 
 
 /* =====================================================
-   LOAD WHISPER
+DYNAMIC LOAD WHISPER
 ===================================================== */
 
 async function loadWhisper(){
 
-  if(transcriber){
-    return transcriber;
+  if(whisperModel){
+
+    return whisperModel;
+
   }
+
 
   captionStatus.textContent =
-    "⏳ Memuat AI Whisper... download pertama bisa cukup besar.";
+    "⏳ Memuat Whisper AI...";
+
 
   progress.style.display =
     "block";
 
   progressBar.style.width =
-    "5%";
+    "3%";
 
-  env.allowLocalModels = false;
-
-  transcriber =
-    await pipeline(
-      "automatic-speech-recognition",
-      "Xenova/whisper-tiny",
-      {
-        progress_callback: data => {
-
-          if(
-            data &&
-            typeof data.progress === "number"
-          ){
-
-            progressBar.style.width =
-              Math.min(
-                95,
-                Math.max(
-                  5,
-                  data.progress
-                )
-              ) + "%";
-
-          }
-
-        }
-      }
-    );
-
-  progressBar.style.width =
-    "100%";
-
-  return transcriber;
-
-}
-
-
-/* =====================================================
-   EXTRACT AUDIO
-===================================================== */
-
-async function extractAudio(){
-
-  const arrayBuffer =
-    await videoFile.arrayBuffer();
-
-  const audioContext =
-    new AudioContext();
-
-  const audioBuffer =
-    await audioContext.decodeAudioData(
-      arrayBuffer
-    );
-
-  const sampleRate =
-    16000;
-
-  const duration =
-    audioBuffer.duration;
-
-  const start =
-    Math.max(
-      0,
-      Number(startTime.value)
-    );
-
-  const end =
-    Math.min(
-      duration,
-      Number(endTime.value)
-    );
-
-  const startSample =
-    Math.floor(
-      start * sampleRate
-    );
-
-  const endSample =
-    Math.floor(
-      end * sampleRate
-    );
-
-  const length =
-    Math.max(
-      1,
-      endSample - startSample
-    );
-
-  const offline =
-    new OfflineAudioContext(
-      1,
-      length,
-      sampleRate
-    );
-
-  const source =
-    offline.createBufferSource();
-
-  const mono =
-    offline.createBuffer(
-      1,
-      audioBuffer.length,
-      audioBuffer.sampleRate
-    );
-
-  const channel =
-    audioBuffer.getChannelData(0);
-
-  mono
-    .getChannelData(0)
-    .set(channel);
-
-  source.buffer =
-    mono;
-
-  source.connect(
-    offline.destination
-  );
-
-  source.start(
-    0,
-    start,
-    end - start
-  );
-
-  const rendered =
-    await offline.startRendering();
-
-  const samples =
-    rendered.getChannelData(0);
-
-  await audioContext.close();
-
-  return samples;
-
-}
-
-
-/* =====================================================
-   GENERATE CAPTION
-===================================================== */
-
-window.generateCaptions =
-async function(){
-
-  if(!videoFile){
-
-    alert(
-      "Upload video terlebih dahulu."
-    );
-
-    return;
-
-  }
-
-  captionBtn.disabled = true;
-
-  downloadSrtBtn.disabled = true;
-
-  translateBtn.disabled = true;
-
-  downloadTranslatedSrtBtn.disabled = true;
-
-  subtitleList.innerHTML = "";
-
-  subtitleData = [];
-
-  progress.style.display =
-    "block";
-
-  progressBar.style.width =
-    "5%";
 
   try{
 
-    const model =
-      await loadWhisper();
+    /*
+      Whisper is imported ONLY here.
 
-    captionStatus.textContent =
-      "🎧 Mengambil audio dari video...";
+      Jadi jika library gagal,
+      upload video tetap bekerja.
+    */
 
-    progressBar.style.width =
-      "20%";
+    const transformers =
+      await import(
+        "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1"
+      );
 
-    const audio =
-      await extractAudio();
-
-    captionStatus.textContent =
-      "🤖 AI sedang mengenali suara...";
 
     progressBar.style.width =
-      "45%";
+      "15%";
 
-    const result =
-      await model(
-        audio,
+
+    transformers.env.allowLocalModels =
+      false;
+
+
+    whisperModel =
+      await transformers.pipeline(
+        "automatic-speech-recognition",
+        "Xenova/whisper-tiny",
         {
-          chunk_length_s:30,
-          stride_length_s:5,
-          return_timestamps:"word"
+
+          progress_callback:
+            function(data){
+
+              if(
+                data &&
+                typeof data.progress ===
+                "number"
+              ){
+
+                const value =
+                  Math.max(
+                    5,
+                    Math.min(
+                      95,
+                      data.progress
+                    )
+                  );
+
+
+                progressBar.style.width =
+                  value + "%";
+
+              }
+
+            }
+
         }
       );
 
-    progressBar.style.width =
-      "90%";
-
-    processTranscript(
-      result
-    );
 
     progressBar.style.width =
       "100%";
 
-    captionStatus.textContent =
-      "✅ Subtitle berhasil dibuat! "
-      + subtitleData.length
-      + " segment.";
 
-    downloadSrtBtn.disabled =
-      subtitleData.length === 0;
-
-    translateBtn.disabled =
-      subtitleData.length === 0;
-
-    if(subtitleData.length > 0){
-
-      translateStatus.textContent =
-        "Subtitle siap diterjemahkan.";
-
-    }
+    return whisperModel;
 
   }
-  catch(error){
-
-    console.error(error);
-
-    captionStatus.textContent =
-      "❌ Gagal membuat subtitle: "
-      + error.message;
-
-    alert(
-      "AI gagal dijalankan.\n\n"
-      + error.message
-    );
-
-  }
-  finally{
-
-    captionBtn.disabled =
-      false;
-
-  }
-
-};
-
-
-/* =====================================================
-   PROCESS TRANSCRIPT
-===================================================== */
-
-function processTranscript(result){
-
-  subtitleData = [];
-
-  const chunks =
-    result.chunks || [];
-
-  if(chunks.length === 0){
-
-    const text =
-      (result.text || "").trim();
-
-    if(text){
-
-      subtitleData.push({
-
-        start:clipStart,
-
-        end:clipEnd,
-
-        text:text,
-
-        translatedText:""
-
-      });
-
-    }
-
-  }
-  else{
-
-    let index = 0;
-
-    for(const chunk of chunks){
-
-      let start;
-      let end;
-      let text;
-
-      if(chunk.timestamp){
-
-        if(Array.isArray(chunk.timestamp)){
-
-          start =
-            Number(chunk.timestamp[0]);
-
-          end =
-            Number(chunk.timestamp[1]);
-
-        }
-
-      }
-
-      text =
-        (chunk.text || "").trim();
-
-      if(
-        text &&
-        Number.isFinite(start)
-      ){
-
-        if(
-          !Number.isFinite(end) ||
-          end <= start
-        ){
-
-          end =
-            start + 2;
-
-        }
-
-        subtitleData.push({
-
-          start:
-            clipStart + start,
-
-          end:
-            clipStart + end,
-
-          text:text,
-
-          translatedText:""
-
-        });
-
-      }
-
-      index++;
-
-    }
-
-  }
-
-  renderSubtitleList();
-
-}
-
-
-/* =====================================================
-   RENDER SUBTITLE LIST
-===================================================== */
-
-function renderSubtitleList(){
-
-  subtitleList.innerHTML = "";
-
-  subtitleData.forEach(
-    (subtitle,index) => {
-
-      const item =
-        document.createElement("div");
-
-      item.className =
-        "subtitle-item";
-
-      item.innerHTML = `
-
-        <div class="subtitle-time">
-          #${index + 1}
-          •
-          ${formatSRTTime(subtitle.start)}
-          →
-          ${formatSRTTime(subtitle.end)}
-        </div>
-
-        <div class="subtitle-text">
-          ${escapeHTML(subtitle.text)}
-        </div>
-
-        ${
-          subtitle.translatedText
-          ?
-          `
-          <div
-            class="subtitle-text"
-            style="margin-top:7px;color:var(--accent)"
-          >
-            ${escapeHTML(subtitle.translatedText)}
-          </div>
-          `
-          :
-          ""
-        }
-
-      `;
-
-      subtitleList.appendChild(item);
-
-    }
-  );
-
-}
-
-
-/* =====================================================
-   TRANSLATE
-===================================================== */
-
-window.translateSubtitles =
-async function(){
-
-  if(
-    !subtitleData ||
-    subtitleData.length === 0
-  ){
-
-    alert(
-      "Generate subtitle terlebih dahulu."
-    );
-
-    return;
-
-  }
-
-  const source =
-    sourceLanguage.value;
-
-  const target =
-    targetLanguage.value;
-
-  if(source === target){
-
-    
+  cat
